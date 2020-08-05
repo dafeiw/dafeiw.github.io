@@ -2,7 +2,7 @@
 title: Event Sourcing
 date: 2019-07-25 18:46:23
 tags:
-sage: true
+hidden: true
 ---
 It is also possible to recreate the status of the order as an aggregate of all of the events that occurred on the stream.
 

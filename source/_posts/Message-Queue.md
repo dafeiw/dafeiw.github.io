@@ -4,7 +4,7 @@ date: 2019-07-27 13:04:55
 tags:
 - Web
 categories: MOM
-sage: true
+hidden: true
 ---
 
 # Reasons to use message queue

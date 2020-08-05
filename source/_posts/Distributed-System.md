@@ -2,7 +2,7 @@
 title: Distributed System
 date: 2019-07-25 11:08:56
 tags:
-sage: true
+hidden: true
 ---
 
 First consider cache
