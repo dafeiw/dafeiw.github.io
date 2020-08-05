@@ -4,8 +4,8 @@
 
 # Site
 title: Dafei's Blog
-subtitle: Stay foolish, always hungry
-description: Just do IT
+subtitle: 
+description: 
 keywords: dafei, dafei wang, blog
 author: Dafei Wang
 language: en
@@ -13,7 +13,7 @@ timezone: Europe/London
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://blog.dafeiw.com
+url: https://dafeiwang.com
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
