@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Montserrat:300,300italic,400,400italic,700,700italic|Apercu Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"dafeiwang.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Spring Components Spring Core provide core utilities and commons stuff   Spring Context provides application context, IoC   Spring Web Spring MVC spring mvc depends on spring web.   Spring DAO Spring">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring Framework">
+<meta property="og:url" content="https://dafeiwang.com/2019/07/19/Spring-Framework/index.html">
+<meta property="og:site_name" content="Dafei&#39;s Blog">
+<meta property="og:description" content="Spring Components Spring Core provide core utilities and commons stuff   Spring Context provides application context, IoC   Spring Web Spring MVC spring mvc depends on spring web.   Spring DAO Spring">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-07-19T20:48:15.000Z">
+<meta property="article:modified_time" content="2019-08-26T19:24:42.000Z">
+<meta property="article:author" content="Dafei Wang">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="Spring">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://dafeiwang.com/2019/07/19/Spring-Framework/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Spring Framework | Dafei's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Dafei's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://dafeiwang.com/2019/07/19/Spring-Framework/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar-png.png">
+      <meta itemprop="name" content="Dafei Wang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dafei's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Spring Framework
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-07-19 21:48:15" itemprop="dateCreated datePublished" datetime="2019-07-19T21:48:15+01:00">2019-07-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-08-26 20:24:42" itemprop="dateModified" datetime="2019-08-26T20:24:42+01:00">2019-08-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Spring/" itemprop="url" rel="index"><span itemprop="name">Spring</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Spring-Components"><a href="#Spring-Components" class="headerlink" title="Spring Components"></a>Spring Components</h1><ul>
+<li>Spring Core<ul>
+<li>provide core utilities and commons stuff</li>
+</ul>
+</li>
+<li>Spring Context<ul>
+<li>provides application context, IoC</li>
+</ul>
+</li>
+<li>Spring Web</li>
+<li>Spring MVC<ul>
+<li>spring mvc depends on spring web.</li>
+</ul>
+</li>
+<li>Spring DAO</li>
+<li>Spring ORM</li>
+<li>Spring AOP</li>
+</ul>
+<h1 id="配置文件封装"><a href="#配置文件封装" class="headerlink" title="配置文件封装"></a>配置文件封装</h1><p>Spring的配置文件由ClassPathResource进行封装</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">InputStreamSource</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Return an &#123;<span class="doctag">@link</span> InputStream&#125; for the content of an underlying resource.</span></span><br><span class="line"><span class="comment">     * &lt;p&gt;It is expected that each call creates a &lt;i&gt;fresh&lt;/i&gt; stream.</span></span><br><span class="line"><span class="comment">     * &lt;p&gt;This requirement is particularly important when you consider an API such</span></span><br><span class="line"><span class="comment">     * as JavaMail, which needs to be able to read the stream multiple times when</span></span><br><span class="line"><span class="comment">     * creating mail attachments. For such a use case, it is &lt;i&gt;required&lt;/i&gt;</span></span><br><span class="line"><span class="comment">     * that each &#123;<span class="doctag">@code</span> getInputStream()&#125; call returns a fresh stream.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> the input stream for the underlying resource (must not be &#123;<span class="doctag">@code</span> null&#125;)</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> java.io.FileNotFoundException if the underlying resource doesn&#x27;t exist</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> IOException if the content stream could not be opened</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function">InputStream <span class="title">getInputStream</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Interface for a resource descriptor that abstracts from the actual</span></span><br><span class="line"><span class="comment"> * type of underlying resource, such as a file or class path resource.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Resource</span> <span class="keyword">extends</span> <span class="title">InputStreamSource</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">exists</span><span class="params">()</span></span>;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Different source has different implementation to Resource. FileSystemResource and ClassPathResource.</p>
+<h1 id="Register-bean-into-IoC"><a href="#Register-bean-into-IoC" class="headerlink" title="Register bean into IoC"></a>Register bean into IoC</h1><h2 id="Use-xml"><a href="#Use-xml" class="headerlink" title="Use xml"></a>Use xml</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;</span></span></span><br><span class="line"><span class="tag"><span class="string">        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;person&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.app.spring.Person&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;Name&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;age&quot;</span> <span class="attr">value</span>=<span class="string">&quot;12&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainTest1</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        ApplicationContext ac = <span class="keyword">new</span> ClassPathXmlApplicationContext(<span class="string">&quot;beans.xml&quot;</span>);</span><br><span class="line">        Person person = (Person) ac.getBean(<span class="string">&quot;person&quot;</span>);</span><br><span class="line">        System.out.println(person);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<h2 id="Use-annotation"><a href="#Use-annotation" class="headerlink" title="Use annotation"></a>Use annotation</h2><h3 id="Bean"><a href="#Bean" class="headerlink" title="@Bean"></a>@Bean</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainTest2</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        ApplicationContext ac = <span class="keyword">new</span> AnnotationConfigApplicationContext(MainConfig.class);</span><br><span class="line">        Person person = (Person) ac.getBean(<span class="string">&quot;person01&quot;</span>);</span><br><span class="line">        System.out.println(person);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        String[] namesForBean = ac.getBeanNamesForType(Person.class);</span><br><span class="line">        <span class="keyword">for</span>(String name: namesForBean) &#123;</span><br><span class="line">            System.out.println(name);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainConfig</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Bean(&quot;beanName&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Person <span class="title">person01</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Person(<span class="string">&quot;Name&quot;</span>, <span class="number">14</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="ComponentScan"><a href="#ComponentScan" class="headerlink" title="@ComponentScan"></a>@ComponentScan</h3><p>Just find Controller annotated bean.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@ComponentScan(value = &quot;com.app.spring2&quot;, includeFilters = &#123;</span></span><br><span class="line"><span class="meta">        @ComponentScan.Filter(type = FilterType.ANNOTATION, classes = &#123;Controller.class&#125;)</span></span><br><span class="line"><span class="meta">&#125;, useDefaultFilters = false)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainConfig</span> </span>&#123;</span><br><span class="line">    <span class="comment">// add this bean to IoC</span></span><br><span class="line">   <span class="meta">@Bean</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> Person <span class="title">person01</span><span class="params">()</span> </span>&#123;</span><br><span class="line">       <span class="keyword">return</span> <span class="keyword">new</span> Person(<span class="string">&quot;Name&quot;</span>, <span class="number">14</span>);</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Import"><a href="#Import" class="headerlink" title="@Import"></a>@Import</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@Import(value = &#123;Dog.class, Cat.class, TestImportSelector.class, TestImportBeanDefinitionRegister.class&#125;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainConfig</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Person <span class="title">person</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;add person bean&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Person(<span class="string">&quot;Name&quot;</span>, <span class="number">14</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestImportSelector</span> <span class="keyword">implements</span> <span class="title">ImportSelector</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> String[] selectImports(AnnotationMetadata importingClassMetadata) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> String[]&#123;<span class="string">&quot;com.app.spring6.bean.Fish&quot;</span>, <span class="string">&quot;com.app.spring6.bean.Tiger&quot;</span>&#125;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Use BeanDefinitionRegistry to manually register a bean</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestImportBeanDefinitionRegister</span> <span class="keyword">implements</span> <span class="title">ImportBeanDefinitionRegistrar</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">registerBeanDefinitions</span><span class="params">(AnnotationMetadata importingClassMetadata,</span></span></span><br><span class="line"><span class="function"><span class="params">                                        BeanDefinitionRegistry registry)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">boolean</span> dog = registry.containsBeanDefinition(<span class="string">&quot;com.app.spring6.bean.Dog&quot;</span>);</span><br><span class="line">        <span class="keyword">boolean</span> cat = registry.containsBeanDefinition(<span class="string">&quot;com.app.spring6.bean.cat&quot;</span>);</span><br><span class="line">        <span class="keyword">if</span> (dog &amp;&amp; cat) &#123;</span><br><span class="line">            RootBeanDefinition beanDefinition = <span class="keyword">new</span> RootBeanDefinition(<span class="string">&quot;com.app.spring6.bean.Pig&quot;</span>);</span><br><span class="line">            registry.registerBeanDefinition(<span class="string">&quot;pig&quot;</span>, beanDefinition);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="FactoryBean"><a href="#FactoryBean" class="headerlink" title="FactoryBean"></a>FactoryBean</h3><p>A FactoryBean is defined in a bean style, but the object exposed for bean is always the object that it creates.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestFactoryBean</span> <span class="keyword">implements</span> <span class="title">FactoryBean</span>&lt;<span class="title">Monkey</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Monkey <span class="title">getObject</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Monkey();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> Class&lt;?&gt; getObjectType() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>In AbstractBeanFactory class:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> Object <span class="title">getObjectForBeanInstance</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">            Object beanInstance, String name, String beanName, <span class="meta">@Nullable</span> RootBeanDefinition mbd)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Don&#x27;t let calling code try to dereference the factory if the bean isn&#x27;t a factory.</span></span><br><span class="line">        <span class="keyword">if</span> (BeanFactoryUtils.isFactoryDereference(name)) &#123;</span><br><span class="line">            <span class="keyword">if</span> (beanInstance <span class="keyword">instanceof</span> NullBean) &#123;</span><br><span class="line">                <span class="keyword">return</span> beanInstance;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (!(beanInstance <span class="keyword">instanceof</span> FactoryBean)) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> BeanIsNotAFactoryException(beanName, beanInstance.getClass());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Now we have the bean instance, which may be a normal bean or a FactoryBean.</span></span><br><span class="line">        <span class="comment">// If it&#x27;s a FactoryBean, we use it to create a bean instance, unless the</span></span><br><span class="line">        <span class="comment">// caller actually wants a reference to the factory.</span></span><br><span class="line">        <span class="keyword">if</span> (!(beanInstance <span class="keyword">instanceof</span> FactoryBean) || BeanFactoryUtils.isFactoryDereference(name)) &#123;</span><br><span class="line">            <span class="keyword">return</span> beanInstance;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        Object object = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">if</span> (mbd == <span class="keyword">null</span>) &#123;</span><br><span class="line">            object = getCachedObjectForFactoryBean(beanName);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (object == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="comment">// Return bean instance from factory.</span></span><br><span class="line">            FactoryBean&lt;?&gt; factory = (FactoryBean&lt;?&gt;) beanInstance;</span><br><span class="line">            <span class="comment">// Caches object obtained from FactoryBean if it is a singleton.</span></span><br><span class="line">            <span class="keyword">if</span> (mbd == <span class="keyword">null</span> &amp;&amp; containsBeanDefinition(beanName)) &#123;</span><br><span class="line">                mbd = getMergedLocalBeanDefinition(beanName);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">boolean</span> synthetic = (mbd != <span class="keyword">null</span> &amp;&amp; mbd.isSynthetic());</span><br><span class="line">            object = getObjectFromFactoryBean(factory, beanName, !synthetic);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> object;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>总结：<br>给容器注册组件：</p>
+<ul>
+<li>包扫描 (@Controller, @Service, @Repository, @Component)<ul>
+<li>一般针对我们自己写的累</li>
+</ul>
+</li>
+<li>@Bean 导入第三方类或包的组件</li>
+<li>@Import </li>
+<li>使用FactoryBean</li>
+</ul>
+<h1 id="Spring-Bean-lifecycle"><a href="#Spring-Bean-lifecycle" class="headerlink" title="Spring Bean lifecycle"></a>Spring Bean lifecycle</h1><ul>
+<li><p>bean的生命周期是指：bean创建 -&gt; 初始化 -&gt; 销毁</p>
+<ul>
+<li>在@Bean中指定initMethod and destroyMethod</li>
+<li>让bean实现InitializingBean 和DisposableBean 接口</li>
+<li>使用@PostConstruct和@PreDestory annotation</li>
+</ul>
+</li>
+<li><p>BeanPostProcessor</p>
+</li>
+</ul>
+<h2 id="Use-initMethod-and-destoryMethod"><a href="#Use-initMethod-and-destoryMethod" class="headerlink" title="Use initMethod and destoryMethod"></a>Use initMethod and destoryMethod</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainConfig</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean(initMethod = &quot;init&quot;, destroyMethod = &quot;destroy&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Flower <span class="title">flower</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Flower();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Flower</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Flower</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Flower constructor...&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Flower ...init...&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">destroy</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Flower ...destroy...&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test01</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    AnnotationConfigApplicationContext ac = <span class="keyword">new</span> AnnotationConfigApplicationContext(MainConfig.class);</span><br><span class="line">    System.out.println(<span class="string">&quot;IoC is created&quot;</span>);</span><br><span class="line">    ac.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>Output:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Flower constructor...</span><br><span class="line">Flower ...init...</span><br><span class="line">IoC is created</span><br><span class="line">Flower ...destroy...</span><br></pre></td></tr></table></figure>
+
+<p>In AbstractBeanFactory.java, doGetBean method:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Create bean instance.</span></span><br><span class="line">                <span class="keyword">if</span> (mbd.isSingleton()) &#123;</span><br><span class="line">                    sharedInstance = getSingleton(beanName, () -&gt; &#123;</span><br><span class="line">                        <span class="keyword">try</span> &#123;</span><br><span class="line">                            <span class="keyword">return</span> createBean(beanName, mbd, args);</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="keyword">catch</span> (BeansException ex) &#123;</span><br><span class="line">                            <span class="comment">// Explicitly remove instance from singleton cache: It might have been put there</span></span><br><span class="line">                            <span class="comment">// eagerly by the creation process, to allow for circular reference resolution.</span></span><br><span class="line">                            <span class="comment">// Also remove any beans that received a temporary reference to the bean.</span></span><br><span class="line">                            destroySingleton(beanName);</span><br><span class="line">                            <span class="keyword">throw</span> ex;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;);</span><br><span class="line">                    bean = getObjectForBeanInstance(sharedInstance, name, beanName, mbd);</span><br><span class="line">                &#125;</span><br></pre></td></tr></table></figure>
+
+<p>createBean in AbstractAutowireCapableBeanFactory</p>
+<h2 id="Use-InitializingBean-DisposableBean-interface"><a href="#Use-InitializingBean-DisposableBean-interface" class="headerlink" title="Use InitializingBean, DisposableBean interface"></a>Use InitializingBean, DisposableBean interface</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Train</span> <span class="keyword">implements</span> <span class="title">InitializingBean</span>, <span class="title">DisposableBean</span> </span>&#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Use-BeanPostProcessor"><a href="#Use-BeanPostProcessor" class="headerlink" title="Use BeanPostProcessor"></a>Use BeanPostProcessor</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestBeanPostProcessor</span> <span class="keyword">implements</span> <span class="title">BeanPostProcessor</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">postProcessBeforeInitialization</span><span class="params">(Object bean, String beanName)</span> <span class="keyword">throws</span> BeansException </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;postProcessBeforeInitialization....&quot;</span> + beanName + <span class="string">&quot;bean&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> bean;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">postProcessAfterInitialization</span><span class="params">(Object bean, String beanName)</span> <span class="keyword">throws</span> BeansException </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;postProcessAfterInitialization....&quot;</span> + beanName + <span class="string">&quot;bean&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> bean;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>PostProcessorBeforeInit -&gt; initMethod -&gt; PostProcessorAfterInit<br>initializeBean method:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">      Object wrappedBean = bean;</span><br><span class="line"><span class="keyword">if</span> (mbd == <span class="keyword">null</span> || !mbd.isSynthetic()) &#123;</span><br><span class="line">    wrappedBean = applyBeanPostProcessorsBeforeInitialization(wrappedBean, beanName);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    invokeInitMethods(beanName, wrappedBean, mbd);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">catch</span> (Throwable ex) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> BeanCreationException(</span><br><span class="line">            (mbd != <span class="keyword">null</span> ? mbd.getResourceDescription() : <span class="keyword">null</span>),</span><br><span class="line">            beanName, <span class="string">&quot;Invocation of init method failed&quot;</span>, ex);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> (mbd == <span class="keyword">null</span> || !mbd.isSynthetic()) &#123;</span><br><span class="line">    wrappedBean = applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Processors are also beans in IoC. They’re created before business bean.</p>
+<p>Spring底层对BeanPostProcessor的使用:</p>
+<ul>
+<li><code>ApplicationContextAwareProcessor</code></li>
+<li><code>BeanValidationPostProcessor</code></li>
+<li><code>InitDestroyAnnotationBeanPostProcessor</code></li>
+</ul>
+<h1 id="Value"><a href="#Value" class="headerlink" title="@Value"></a>@Value</h1><p>Use @Value to assign value to this variable. It supports String, StringEL and properties</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Value(&quot;Test&quot;)</span></span><br><span class="line"><span class="keyword">private</span> String name;</span><br><span class="line"><span class="meta">@Value(&quot;#&#123;20-2&#125;&quot;)</span></span><br><span class="line"><span class="keyword">private</span> Integer age;</span><br><span class="line"><span class="meta">@Value(&quot;$&#123;bird.color&#125;&quot;)</span></span><br><span class="line"><span class="keyword">private</span> String color;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@PropertySource(&quot;classpath:/test.properties&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainConfig</span> </span>&#123;</span><br></pre></td></tr></table></figure>
+
+<h1 id="Autowired-Qualifier-Primary"><a href="#Autowired-Qualifier-Primary" class="headerlink" title="Autowired, Qualifier, Primary"></a>Autowired, Qualifier, Primary</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Autowired(required = false)</span></span><br></pre></td></tr></table></figure>
+
+
+<h1 id="Aware-interface"><a href="#Aware-interface" class="headerlink" title="Aware interface"></a>Aware interface</h1><p>The following method in <code>AbstractAutowireCapableBeanFactory</code>: Initialize the given bean instance, applying factory callbacks as well as init methods and bean post processors.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> Object <span class="title">initializeBean</span><span class="params">(<span class="keyword">final</span> String beanName, <span class="keyword">final</span> Object bean, <span class="meta">@Nullable</span> RootBeanDefinition mbd)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (System.getSecurityManager() != <span class="keyword">null</span>) &#123;</span><br><span class="line">            AccessController.doPrivileged((PrivilegedAction&lt;Object&gt;) () -&gt; &#123;</span><br><span class="line">                invokeAwareMethods(beanName, bean);</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">            &#125;, getAccessControlContext());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            invokeAwareMethods(beanName, bean);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        Object wrappedBean = bean;</span><br><span class="line">        <span class="keyword">if</span> (mbd == <span class="keyword">null</span> || !mbd.isSynthetic()) &#123;</span><br><span class="line">            wrappedBean = applyBeanPostProcessorsBeforeInitialization(wrappedBean, beanName);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            invokeInitMethods(beanName, wrappedBean, mbd);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">catch</span> (Throwable ex) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> BeanCreationException(</span><br><span class="line">                    (mbd != <span class="keyword">null</span> ? mbd.getResourceDescription() : <span class="keyword">null</span>),</span><br><span class="line">                    beanName, <span class="string">&quot;Invocation of init method failed&quot;</span>, ex);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (mbd == <span class="keyword">null</span> || !mbd.isSynthetic()) &#123;</span><br><span class="line">            wrappedBean = applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> wrappedBean;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>总结：把Spring底层的组件可以注入到自定义的bean中</p>
+<h1 id="AOP"><a href="#AOP" class="headerlink" title="AOP"></a>AOP</h1><ul>
+<li><p>@Before</p>
+</li>
+<li><p>@After</p>
+</li>
+<li><p>@AfterReturning</p>
+</li>
+<li><p>@AfterThrowing</p>
+</li>
+<li><p>@Around</p>
+</li>
+<li><p>@EnableAspectJAutoProxy</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Aspect</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LogAspects</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Pointcut(&quot;execution(public int com.app.spring10.aop.Calculator.div(int, int))&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">pointCut</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Before(&quot;pointCut()&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">logStart</span><span class="params">(JoinPoint joinPoint)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;div start @Before &quot;</span> + joinPoint.getSignature().getName()</span><br><span class="line">        + <span class="string">&quot; &quot;</span> + Arrays.toString(joinPoint.getArgs()));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@After(&quot;pointCut()&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">logEnd</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;div end @After&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@AfterReturning(value = &quot;pointCut()&quot;, returning = &quot;result&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">logReturn</span><span class="params">(<span class="keyword">int</span> result)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;div return... result is @AfterReturning &quot;</span> + result);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@AfterThrowing(value = &quot;pointCut()&quot;, throwing = &quot;exception&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">logException</span><span class="params">(Exception exception)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;div return throwing... exception is @AfterThrowing &quot;</span> + exception);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Around(&quot;pointCut()&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">around</span><span class="params">(ProceedingJoinPoint proceedingJoinPoint)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Before proceed @Around&quot;</span>);</span><br><span class="line">        Object obj = proceedingJoinPoint.proceed();</span><br><span class="line">        System.out.println(<span class="string">&quot;After proceed @Around&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> obj;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Before proceed @Around</span><br><span class="line">div start @Before</span><br><span class="line">After proceed @Around</span><br><span class="line">div end @After</span><br><span class="line">div return... result is @AfterReturning </span><br></pre></td></tr></table></figure>
+
+<p>AOP原理： 给容器注册了什么组件，这个组件什么时候工作，这个组件功能是什么</p>
+<p>我们打开源码知道<code>class AspectJAutoProxyRegistrar implements ImportBeanDefinitionRegistrar</code>，ImportBeanDefinitionRegistrar 是可以给容器自定义注册组件的，</p>
+<ul>
+<li>它注册<code>AnnotationAwareAspectJAutoProxyCreator</code>组件</li>
+<li>然后<code>AnnotationAwareAspectJAutoProxyCreator</code>是实现了一个postprocessor和Ordered和BeanFactoryAware<br><code>class AspectJAutoProxyRegistrar implements ImportBeanDefinitionRegistrar</code></li>
+</ul>
+<p>==&gt; <code>AopConfigUtils.registerAspectJAnnotationAutoProxyCreatorIfNecessary(registry);</code></p>
+<p>==&gt; <code>registerOrEscalateApcAsRequired(AnnotationAwareAspectJAutoProxyCreator.class, registry, source)</code></p>
+<p>==&gt; <code>registry.registerBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME, beanDefinition);</code> (AUTO_PROXY_CREATOR_BEAN_NAME = org.springframework.aop.config.internalAutoProxyCreator )</p>
+<p>So the <code>AnnotationAwareAspectJAutoProxyCreator</code> bean definition is registered in IoC.</p>
+<p><code>public class AnnotationAwareAspectJAutoProxyCreator extends AspectJAwareAdvisorAutoProxyCreator</code>. We can see it’s <code>SmartInstantiationAwareBeanPostProcessor</code>, <code>Ordered</code> and <code>BeanFactoryAware</code></p>
+<p><code>AbstractAutoProxyCreator</code> creates the proxy of the target class.</p>
+<h1 id="Transactional"><a href="#Transactional" class="headerlink" title="Transactional"></a>Transactional</h1><p>@EnableTransactionManagement</p>
+<p><code>public class TransactionManagementConfigurationSelector extends AdviceModeImportSelector&lt;EnableTransactionManagement&gt;</code></p>
+<p>it’s a selector.</p>
+<p><code>TransactionInterceptor.class</code></p>
+<h1 id="BeanFactory的两个重要的后置处理器"><a href="#BeanFactory的两个重要的后置处理器" class="headerlink" title="BeanFactory的两个重要的后置处理器"></a>BeanFactory的两个重要的后置处理器</h1><ul>
+<li><p>BeanFactoryPostProcessor </p>
+<ul>
+<li>在BeanFactory标准初始化之后调用，来定制和修改BeanFactory的内容；</li>
+<li>所有的bean定义已经保存加载到beanFactory，但是bean的实例还未创建</li>
+</ul>
+</li>
+<li><p>BeanDefinitionRegistryPostProcessor</p>
+</li>
+</ul>
+<h1 id="Spring-Web-MVC"><a href="#Spring-Web-MVC" class="headerlink" title="Spring Web MVC"></a>Spring Web MVC</h1><p>Spring Web MVC is hte original web framework built on the Servlet API and has been included in the Spring Framework from the very beginning. In addition to Spring Web MVC, Spring Framework 5.0 introduced a reactive-stack web framework whose name is “Spring WebFlux”</p>
+<h2 id="ServletContainerInitializer"><a href="#ServletContainerInitializer" class="headerlink" title="ServletContainerInitializer"></a>ServletContainerInitializer</h2><p>web.xml three main components:</p>
+<ul>
+<li>Servlet<br>The Container runs multiple threads to process multiple requests to a single servlet.</li>
+</ul>
+<ul>
+<li>Filter</li>
+<li>Listener</li>
+</ul>
+<p>SpringMVC uses ServletContainerInitializer to load IoC and to register servlet, filter and listener.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">onStartup</span><span class="params">(java.util.Set&lt;java.lang.Class&lt;?&gt;&gt; c, ServletContext ctx)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// register servlet</span></span><br><span class="line">    javax.servlet.ServletRegistration.Dynamic servlet = ctx.addServlet(<span class="string">&quot;orderServlet&quot;</span>, <span class="keyword">new</span> OrderServlet());</span><br><span class="line">    servlet.addMapping(<span class="string">&quot;/orderTest&quot;</span>);</span><br><span class="line"></span><br><span class="line">   <span class="comment">// register listener</span></span><br><span class="line">   ctx.addListener(OrderListener.class);</span><br><span class="line"></span><br><span class="line">   <span class="comment">// register filter</span></span><br><span class="line">   javax.servlet.FilterRegistration.Dynamic filter = ctx.addFilter(<span class="string">&quot;orderFilter&quot;</span>, OrderFilter.class);</span><br><span class="line">   <span class="comment">// add mapping to specify which servlet to intercept</span></span><br><span class="line">   filter.addMappingForUrlPatterns();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="SpringServletContainerInitializer"><a href="#SpringServletContainerInitializer" class="headerlink" title="SpringServletContainerInitializer"></a>SpringServletContainerInitializer</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onStartup</span><span class="params">(<span class="meta">@Nullable</span> Set&lt;Class&lt;?&gt;&gt; webAppInitializerClasses, ServletContext servletContext)</span></span></span><br><span class="line"><span class="function">            <span class="keyword">throws</span> ServletException </span>&#123;</span><br><span class="line"></span><br><span class="line">        List&lt;WebApplicationInitializer&gt; initializers = <span class="keyword">new</span> LinkedList&lt;&gt;();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (webAppInitializerClasses != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">for</span> (Class&lt;?&gt; waiClass : webAppInitializerClasses) &#123;</span><br><span class="line">                <span class="comment">// Be defensive: Some servlet containers provide us with invalid classes,</span></span><br><span class="line">                <span class="comment">// no matter what @HandlesTypes says...</span></span><br><span class="line">                <span class="keyword">if</span> (!waiClass.isInterface() &amp;&amp; !Modifier.isAbstract(waiClass.getModifiers()) &amp;&amp;</span><br><span class="line">                        WebApplicationInitializer.class.isAssignableFrom(waiClass)) &#123;</span><br><span class="line">                    <span class="keyword">try</span> &#123;</span><br><span class="line">                        initializers.add((WebApplicationInitializer)</span><br><span class="line">                                ReflectionUtils.accessibleConstructor(waiClass).newInstance());</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">catch</span> (Throwable ex) &#123;</span><br><span class="line">                        <span class="keyword">throw</span> <span class="keyword">new</span> ServletException(<span class="string">&quot;Failed to instantiate WebApplicationInitializer class&quot;</span>, ex);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (initializers.isEmpty()) &#123;</span><br><span class="line">            servletContext.log(<span class="string">&quot;No Spring WebApplicationInitializer types detected on classpath&quot;</span>);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        servletContext.log(initializers.size() + <span class="string">&quot; Spring WebApplicationInitializers detected on classpath&quot;</span>);</span><br><span class="line">        AnnotationAwareOrderComparator.sort(initializers);</span><br><span class="line">        <span class="keyword">for</span> (WebApplicationInitializer initializer : initializers) &#123;</span><br><span class="line">            initializer.onStartup(servletContext);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>Let’s see what impl of webAppInitializerClasses are:</p>
+
+
+
+<p>First one is <code>AbstractContextLoaerInitializer</code>. In its onStartup method, it registers context loader listener.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onStartup</span><span class="params">(ServletContext servletContext)</span> <span class="keyword">throws</span> ServletException </span>&#123;</span><br><span class="line">        registerContextLoaderListener(servletContext);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Register a &#123;<span class="doctag">@link</span> ContextLoaderListener&#125; against the given servlet context. The</span></span><br><span class="line"><span class="comment">     * &#123;<span class="doctag">@code</span> ContextLoaderListener&#125; is initialized with the application context returned</span></span><br><span class="line"><span class="comment">     * from the &#123;<span class="doctag">@link</span> #createRootApplicationContext()&#125; template method.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> servletContext the servlet context to register the listener against</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">registerContextLoaderListener</span><span class="params">(ServletContext servletContext)</span> </span>&#123;</span><br><span class="line">        WebApplicationContext rootAppContext = createRootApplicationContext();</span><br><span class="line">        <span class="keyword">if</span> (rootAppContext != <span class="keyword">null</span>) &#123;</span><br><span class="line">            ContextLoaderListener listener = <span class="keyword">new</span> ContextLoaderListener(rootAppContext);</span><br><span class="line">            listener.setContextInitializers(getRootApplicationContextInitializers());</span><br><span class="line">            servletContext.addListener(listener);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            logger.debug(<span class="string">&quot;No ContextLoaderListener registered, as &quot;</span> +</span><br><span class="line">                    <span class="string">&quot;createRootApplicationContext() did not return an application context&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>It creates a root application context firstly. It uses template pattern here. The actual creation is done by its child class.</p>
+<p>Second one is <code>AbstractDispatcherServletInitializer</code>. As name implies, it initializes dispatcherServlet.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onStartup</span><span class="params">(ServletContext servletContext)</span> <span class="keyword">throws</span> ServletException </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onStartup(servletContext);</span><br><span class="line">        registerDispatcherServlet(servletContext);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Register a &#123;<span class="doctag">@link</span> DispatcherServlet&#125; against the given servlet context.</span></span><br><span class="line"><span class="comment">     * &lt;p&gt;This method will create a &#123;<span class="doctag">@code</span> DispatcherServlet&#125; with the name returned by</span></span><br><span class="line"><span class="comment">     * &#123;<span class="doctag">@link</span> #getServletName()&#125;, initializing it with the application context returned</span></span><br><span class="line"><span class="comment">     * from &#123;<span class="doctag">@link</span> #createServletApplicationContext()&#125;, and mapping it to the patterns</span></span><br><span class="line"><span class="comment">     * returned from &#123;<span class="doctag">@link</span> #getServletMappings()&#125;.</span></span><br><span class="line"><span class="comment">     * &lt;p&gt;Further customization can be achieved by overriding &#123;<span class="doctag">@link</span></span></span><br><span class="line"><span class="comment">     * #customizeRegistration(ServletRegistration.Dynamic)&#125; or</span></span><br><span class="line"><span class="comment">     * &#123;<span class="doctag">@link</span> #createDispatcherServlet(WebApplicationContext)&#125;.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> servletContext the context to register the servlet against</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">registerDispatcherServlet</span><span class="params">(ServletContext servletContext)</span> </span>&#123;</span><br><span class="line">        String servletName = getServletName();</span><br><span class="line">        Assert.hasLength(servletName, <span class="string">&quot;getServletName() must not return null or empty&quot;</span>);</span><br><span class="line"></span><br><span class="line">        WebApplicationContext servletAppContext = createServletApplicationContext();</span><br><span class="line">        Assert.notNull(servletAppContext, <span class="string">&quot;createServletApplicationContext() must not return null&quot;</span>);</span><br><span class="line"></span><br><span class="line">        FrameworkServlet dispatcherServlet = createDispatcherServlet(servletAppContext);</span><br><span class="line">        Assert.notNull(dispatcherServlet, <span class="string">&quot;createDispatcherServlet(WebApplicationContext) must not return null&quot;</span>);</span><br><span class="line">        dispatcherServlet.setContextInitializers(getServletApplicationContextInitializers());</span><br><span class="line"></span><br><span class="line">        ServletRegistration.Dynamic registration = servletContext.addServlet(servletName, dispatcherServlet);</span><br><span class="line">        <span class="keyword">if</span> (registration == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">&quot;Failed to register servlet with name &#x27;&quot;</span> + servletName + <span class="string">&quot;&#x27;. &quot;</span> +</span><br><span class="line">                    <span class="string">&quot;Check if there is another servlet registered under the same name.&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        registration.setLoadOnStartup(<span class="number">1</span>);</span><br><span class="line">        registration.addMapping(getServletMappings());</span><br><span class="line">        registration.setAsyncSupported(isAsyncSupported());</span><br><span class="line"></span><br><span class="line">        Filter[] filters = getServletFilters();</span><br><span class="line">        <span class="keyword">if</span> (!ObjectUtils.isEmpty(filters)) &#123;</span><br><span class="line">            <span class="keyword">for</span> (Filter filter : filters) &#123;</span><br><span class="line">                registerServletFilter(servletContext, filter);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        customizeRegistration(registration);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>It creates servlet application context. Same here, the actual implementation of <code>createServletApplicationContext</code> is done by its child class.</p>
+<p>Now, The third impl is <code>AbstractAnnotationConfigDispatcherServletInitializer</code>;</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">   <span class="meta">@Override</span></span><br><span class="line"><span class="meta">@Nullable</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> WebApplicationContext <span class="title">createRootApplicationContext</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Class&lt;?&gt;[] configClasses = getRootConfigClasses();</span><br><span class="line">    <span class="keyword">if</span> (!ObjectUtils.isEmpty(configClasses)) &#123;</span><br><span class="line">        AnnotationConfigWebApplicationContext context = <span class="keyword">new</span> AnnotationConfigWebApplicationContext();</span><br><span class="line">        context.register(configClasses);</span><br><span class="line">        <span class="keyword">return</span> context;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> WebApplicationContext <span class="title">createServletApplicationContext</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    AnnotationConfigWebApplicationContext context = <span class="keyword">new</span> AnnotationConfigWebApplicationContext();</span><br><span class="line">    Class&lt;?&gt;[] configClasses = getServletConfigClasses();</span><br><span class="line">    <span class="keyword">if</span> (!ObjectUtils.isEmpty(configClasses)) &#123;</span><br><span class="line">        context.register(configClasses);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> context;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#spring-web</code></p>
+<p>DispatcherServlet is a HttpServlet. It prvoides a shared algorithm for request processing, while actual work is performed by configurable delegate components. The DispatcherServlet uses Spring configuration to discover the delegate components it needs for request mapping, view resolution, exception handling, and more.</p>
+<h2 id="Asynchronous-Requests"><a href="#Asynchronous-Requests" class="headerlink" title="Asynchronous Requests"></a>Asynchronous Requests</h2><p>In Servlet 3.0, you can obtain AsyncContext object by startAsync method of ServletRequest.<br>request receiver thread and request processing thread are separate. It doesn’t block the Tomcat HTTP thread.</p>
+<h3 id="DeferredResult"><a href="#DeferredResult" class="headerlink" title="DeferredResult"></a>DeferredResult</h3><p>DeferredResult, available from Spring 3.2 onwards, assists in offloading a long-running computation from an http-worker thread to a separate thread. It can retrieve result from different thread. </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BlockingRESTController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line"> <span class="meta">@GetMapping(&quot;/blocking-request&quot;)</span></span><br><span class="line"> <span class="keyword">public</span> ResponseEntity &lt; ? &gt; blockHttpRequest() <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line"></span><br><span class="line">  Thread.sleep(<span class="number">4000</span>);</span><br><span class="line">  <span class="keyword">return</span> ResponseEntity.ok(<span class="string">&quot;OK&quot;</span>);</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>=&gt;</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeferredResultController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Logger LOGGER = LoggerFactory.getLogger(DeferredResultController.class);</span><br><span class="line"></span><br><span class="line"> <span class="meta">@GetMapping(&quot;/asynchronous-request&quot;)</span></span><br><span class="line"> <span class="keyword">public</span> DeferredResult &lt; ResponseEntity &lt; ? &gt;&gt; asynchronousRequestProcessing(<span class="keyword">final</span> Model model) &#123;</span><br><span class="line"></span><br><span class="line">  LOGGER.info(<span class="string">&quot;Started processing asynchronous request&quot;</span>);</span><br><span class="line">  <span class="keyword">final</span> DeferredResult &lt; ResponseEntity &lt; ? &gt;&gt; deferredResult = <span class="keyword">new</span> DeferredResult &lt; &gt; ();</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * Section to simulate slow running thread blocking process</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  ForkJoinPool forkJoinPool = <span class="keyword">new</span> ForkJoinPool();</span><br><span class="line">  forkJoinPool.submit(() -&gt; &#123;</span><br><span class="line">   LOGGER.info(<span class="string">&quot;Processing request in new thread&quot;</span>);</span><br><span class="line">   <span class="keyword">try</span> &#123;</span><br><span class="line">    Thread.sleep(<span class="number">4000</span>);</span><br><span class="line"></span><br><span class="line">   &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">    LOGGER.error(<span class="string">&quot;InterruptedException while executing the thread &#123;&#125;&quot;</span>, e.fillInStackTrace());</span><br><span class="line">   &#125;</span><br><span class="line">   deferredResult.setResult(ResponseEntity.ok(<span class="string">&quot;OK&quot;</span>));</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> deferredResult;</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>output:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">... INFO 11879 --- [nio-8080-exec-1] c.j.d.DeferredResultController           : Started processing asynchronous request</span><br><span class="line">... INFO 11879 --- [nio-8080-exec-1] c.j.d.DeferredResultController           : HTTP Wroker thread is relased.</span><br><span class="line">...  INFO 11879 --- [Pool-1-worker-1] c.j.d.DeferredResultController           : Processing request in new thread</span><br></pre></td></tr></table></figure>
+
+<p>*Callable</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Callable&lt;String&gt; <span class="title">processUpload</span><span class="params">(<span class="keyword">final</span> MultipartFile file)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Callable&lt;String&gt;() &#123;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> String <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">            <span class="comment">// ...</span></span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;someView&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="ContextLoaderListener"><a href="#ContextLoaderListener" class="headerlink" title="ContextLoaderListener"></a>ContextLoaderListener</h2><p>实现ServletContextListener接口，向ServletContext中添加任意的对象。</p>
+<p>ServletContextListener中的核心逻辑便是初始化WebApplicationContext实例并存放至ServletContext中。</p>
+<ul>
+<li><p>初始化</p>
+<ul>
+<li>Servlet container load servlet class</li>
+<li>Servlet container creates a ServletConfig对象</li>
+<li>Servlet container creates a servlet 对象</li>
+<li>Servlet cotnainer call init method</li>
+</ul>
+</li>
+<li><p>运行阶段</p>
+<ul>
+<li>servlet container会创建ServletRequest和ServletResponse对象，然后调用service方法。</li>
+</ul>
+</li>
+<li><p>销毁阶段</p>
+<ul>
+<li>servlet container会invoke servlet对象的destroy方法。然后再销毁servlet对象。destroy方法里可以关闭数据库链接等等</li>
+</ul>
+</li>
+</ul>
+<h2 id="Handler-Methods"><a href="#Handler-Methods" class="headerlink" title="Handler Methods"></a>Handler Methods</h2><p><code>https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-methods</code></p>
+<p>@RequestMapping handler methods have a flexible signature and can choose from a range of supported controller method arguments and return values.</p>
+<p>For access to the HTTP request body. Body content is converted to the declared method argument type by using HttpMessageConverter implementations. See @RequestBody.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping(&quot;/demo&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handle</span><span class="params">(<span class="meta">@CookieValue(&quot;JSESSIONID&quot;)</span> String cookie)</span> </span>&#123; </span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Host                    localhost:8080</span><br><span class="line">Accept                  text&#x2F;html,application&#x2F;xhtml+xml,application&#x2F;xml;q&#x3D;0.9</span><br><span class="line">Accept-Language         fr,en-gb;q&#x3D;0.7,en;q&#x3D;0.3</span><br><span class="line">Accept-Encoding         gzip,deflate</span><br><span class="line">Accept-Charset          ISO-8859-1,utf-8;q&#x3D;0.7,*;q&#x3D;0.7</span><br><span class="line">Keep-Alive              300</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping(&quot;/demo&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handle</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="meta">@RequestHeader(&quot;Accept-Encoding&quot;)</span> String encoding, </span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="meta">@RequestHeader(&quot;Keep-Alive&quot;)</span> <span class="keyword">long</span> keepAlive)</span> </span>&#123; </span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>When an @RequestHeader annotation is used on a Map&lt;String, String&gt;, MultiValueMap&lt;String, String&gt;, or HttpHeaders argument, the map is populated with all header values.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping(path = &quot;/pets&quot;, consumes = &quot;application/json&quot;)</span> </span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addPet</span><span class="params">(<span class="meta">@RequestBody</span> Pet pet)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Java/" rel="tag"># Java</a>
+              <a href="/tags/Spring/" rel="tag"># Spring</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/07/16/Tomcat-Architecture/" rel="prev" title="Tomcat Architecture">
+      <i class="fa fa-chevron-left"></i> Tomcat Architecture
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/07/24/Concurrent-Programming/" rel="next" title="Concurrent Programming">
+      Concurrent Programming <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring-Components"><span class="nav-number">1.</span> <span class="nav-text">Spring Components</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%B0%81%E8%A3%85"><span class="nav-number">2.</span> <span class="nav-text">配置文件封装</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Register-bean-into-IoC"><span class="nav-number">3.</span> <span class="nav-text">Register bean into IoC</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Use-xml"><span class="nav-number">3.1.</span> <span class="nav-text">Use xml</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Use-annotation"><span class="nav-number">3.2.</span> <span class="nav-text">Use annotation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Bean"><span class="nav-number">3.2.1.</span> <span class="nav-text">@Bean</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ComponentScan"><span class="nav-number">3.2.2.</span> <span class="nav-text">@ComponentScan</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Import"><span class="nav-number">3.2.3.</span> <span class="nav-text">@Import</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FactoryBean"><span class="nav-number">3.2.4.</span> <span class="nav-text">FactoryBean</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring-Bean-lifecycle"><span class="nav-number">4.</span> <span class="nav-text">Spring Bean lifecycle</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Use-initMethod-and-destoryMethod"><span class="nav-number">4.1.</span> <span class="nav-text">Use initMethod and destoryMethod</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Use-InitializingBean-DisposableBean-interface"><span class="nav-number">4.2.</span> <span class="nav-text">Use InitializingBean, DisposableBean interface</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Use-BeanPostProcessor"><span class="nav-number">4.3.</span> <span class="nav-text">Use BeanPostProcessor</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Value"><span class="nav-number">5.</span> <span class="nav-text">@Value</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Autowired-Qualifier-Primary"><span class="nav-number">6.</span> <span class="nav-text">Autowired, Qualifier, Primary</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Aware-interface"><span class="nav-number">7.</span> <span class="nav-text">Aware interface</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#AOP"><span class="nav-number">8.</span> <span class="nav-text">AOP</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Transactional"><span class="nav-number">9.</span> <span class="nav-text">Transactional</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#BeanFactory%E7%9A%84%E4%B8%A4%E4%B8%AA%E9%87%8D%E8%A6%81%E7%9A%84%E5%90%8E%E7%BD%AE%E5%A4%84%E7%90%86%E5%99%A8"><span class="nav-number">10.</span> <span class="nav-text">BeanFactory的两个重要的后置处理器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring-Web-MVC"><span class="nav-number">11.</span> <span class="nav-text">Spring Web MVC</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ServletContainerInitializer"><span class="nav-number">11.1.</span> <span class="nav-text">ServletContainerInitializer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SpringServletContainerInitializer"><span class="nav-number">11.2.</span> <span class="nav-text">SpringServletContainerInitializer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Asynchronous-Requests"><span class="nav-number">11.3.</span> <span class="nav-text">Asynchronous Requests</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#DeferredResult"><span class="nav-number">11.3.1.</span> <span class="nav-text">DeferredResult</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ContextLoaderListener"><span class="nav-number">11.4.</span> <span class="nav-text">ContextLoaderListener</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Handler-Methods"><span class="nav-number">11.5.</span> <span class="nav-text">Handler Methods</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Dafei Wang"
+      src="/images/avatar-png.png">
+  <p class="site-author-name" itemprop="name">Dafei Wang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dafei Wang</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Montserrat:300,300italic,400,400italic,700,700italic|Apercu Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"dafeiwang.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="1. OriginREST this word is proposed by Roy Fielding in his paper. He is also the originator of the HTTP specification. This is what he said in his paper:  My work is motivated by the desire to underst">
+<meta property="og:type" content="article">
+<meta property="og:title" content="What is REST">
+<meta property="og:url" content="https://dafeiwang.com/2019/07/07/What-is-REST/index.html">
+<meta property="og:site_name" content="Dafei&#39;s Blog">
+<meta property="og:description" content="1. OriginREST this word is proposed by Roy Fielding in his paper. He is also the originator of the HTTP specification. This is what he said in his paper:  My work is motivated by the desire to underst">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-07-07T17:52:15.000Z">
+<meta property="article:modified_time" content="2019-07-16T00:13:06.000Z">
+<meta property="article:author" content="Dafei Wang">
+<meta property="article:tag" content="Web">
+<meta property="article:tag" content="REST">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://dafeiwang.com/2019/07/07/What-is-REST/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>What is REST | Dafei's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Dafei's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://dafeiwang.com/2019/07/07/What-is-REST/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar-png.png">
+      <meta itemprop="name" content="Dafei Wang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dafei's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          What is REST
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-07-07 18:52:15" itemprop="dateCreated datePublished" datetime="2019-07-07T18:52:15+01:00">2019-07-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-07-16 01:13:06" itemprop="dateModified" datetime="2019-07-16T01:13:06+01:00">2019-07-16</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Web/" itemprop="url" rel="index"><span itemprop="name">Web</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="1-Origin"><a href="#1-Origin" class="headerlink" title="1. Origin"></a>1. Origin</h1><p>REST this word is proposed by <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Roy_Fielding">Roy Fielding</a> in his <a target="_blank" rel="noopener" href="https://www.ics.uci.edu/~fielding/pubs/dissertation/top.htm">paper</a>. He is also the originator of the HTTP specification.</p>
+<p>This is what he said in his paper:</p>
+<blockquote>
+<p>My work is motivated by the desire to understand and evaluate the architectural design of network-based application software through principled use of architectural constraints, thereby obtaining the functional, performance, and social properties desired of an architecture.</p>
+</blockquote>
+<h1 id="2-Key-Concepts"><a href="#2-Key-Concepts" class="headerlink" title="2. Key Concepts"></a>2. Key Concepts</h1><p>REST stands for Representational State Transfer. It’s a architecural style or design pattern for APIs (it’s not a protocol). It’s a popular approach to building APIs because it emphasizes simplicity, extensibility, reliability, and performance.</p>
+<a id="more"></a>
+<h2 id="Client"><a href="#Client" class="headerlink" title="Client"></a>Client</h2><p>A client is the person or software who uses the API.</p>
+<h2 id="Resource"><a href="#Resource" class="headerlink" title="Resource"></a>Resource</h2><p>A resource can be any object that API can provide information about. Any information that can be named can be a resource. Each resource has a URI. If you obtain one resource, you jut use its URI.</p>
+<h2 id="Representation"><a href="#Representation" class="headerlink" title="Representation"></a>Representation</h2><p>The state of resource at any particular timestamp is known as resource representation. Representations are the way API clients see the resources. A representation consists of data, metadata describing the data and hypermedia links which can help the clients in transition to next desired state. A RESTful API never hands resources directly to a client. Interactions happen only via representations of the real resource. For example, you can store all users in a database table, but the representation of these users can be JSON or XML.</p>
+<p>The data format of a representation is known as a media type. The media type identifies a specification that defines how a representation is to be processed. </p>
+<p>Resources are decoupled from their representation so that their content can be accessed in a variety of formats, such as HTML, XML, plain text, PDF, JPEG, JSON, and others.</p>
+<h2 id="Actions"><a href="#Actions" class="headerlink" title="Actions"></a>Actions</h2><p>Clients don’t have direct access to resources, so they need actions to alter the state of a resource. Roy Fielding has never mentioned any recommendation around which method to be used in which condition. All he emphasizes is that it should be uniform interface.</p>
+<h1 id="3-REST-vs-HTTP"><a href="#3-REST-vs-HTTP" class="headerlink" title="3. REST vs HTTP"></a>3. REST vs HTTP</h1><p>It’s important to mention that REST is not limited to HTTP. The author of REST and HTTP is same, thus REST and HTTP fits very well with each other.</p>
+<p>In HTTP, URLs can be used to locate REST resources. Media Types spcifies how the data in requests and responses look like. HTTP built-in methods implement REST actions.</p>
+<h1 id="4-REST-6-Constrains"><a href="#4-REST-6-Constrains" class="headerlink" title="4. REST 6 Constrains"></a>4. REST 6 Constrains</h1><h2 id="Uniform-interface"><a href="#Uniform-interface" class="headerlink" title="Uniform interface"></a>Uniform interface</h2><p>You MUST decide APIs interface for resources inside the system. A resource has to be represented by a URI. The response should provide a way to fetch related or additional data.</p>
+<p>A single resource should not be too large and contain each and everything in its representation. Whenever relevant, a resource should contain links (HATEOAS) pointing to relative URIs to fetch related information.</p>
+<blockquote>
+<p>Once a developer becomes familiar with one of your API, he should be able to follow the similar approach for other APIs.</p>
+</blockquote>
+<h2 id="Client-Server-Spearation"><a href="#Client-Server-Spearation" class="headerlink" title="Client - Server Spearation"></a>Client - Server Spearation</h2><p>The client and the server MUST be able to evolve separately without any dependency on each other. The client should know only resource URIs and that’s all.</p>
+<blockquote>
+<p>Servers and clients may also be replaced and developed independently, as long as the interface between them is not altered.</p>
+</blockquote>
+<h2 id="Stateless"><a href="#Stateless" class="headerlink" title="Stateless"></a>Stateless</h2><p>The server doesn’t remember anything about the user. The server treats each request as a new request. No session, no history. So the request needs to contains all the information the server needs to process the request - including authentication and authorization details.</p>
+<blockquote>
+<p>No client context shall be stored on the server between requests. The client is responsible for managing the state of the application.</p>
+</blockquote>
+<h2 id="Layerd-system"><a href="#Layerd-system" class="headerlink" title="Layerd system"></a>Layerd system</h2><p>There maybe mutiple layers in the backend (security layer, caching layer, load-balancing layer, or other functionality). The client is agnostic to the layers. You deploy the APIs on server A, and store data on server B and authenticate requests in Server C</p>
+<h2 id="Cacheable"><a href="#Cacheable" class="headerlink" title="Cacheable"></a>Cacheable</h2><p>The response should contain information about whether or not hte data is cacheable. These resources MUST declare themselves cacheable. Caching can be implemented on the server or client side.</p>
+<blockquote>
+<p>Well-managed caching partially or completely eliminates some client-server interactions, further improving scalability and performance.</p>
+</blockquote>
+<h2 id="Code-on-demand"><a href="#Code-on-demand" class="headerlink" title="Code-on-demand"></a>Code-on-demand</h2><p>The response can return codes to client.</p>
+<h1 id="HTTP-status-code"><a href="#HTTP-status-code" class="headerlink" title="HTTP status code"></a>HTTP status code</h1><h2 id="2xx-Success-class"><a href="#2xx-Success-class" class="headerlink" title="2xx - Success class"></a>2xx - Success class</h2><p>These status code are returned when the server succeeded in processing the request. 200 OK. 201 Created (ideally, contains a Location header). 204 No Content (no response body)</p>
+<h2 id="3xx-Redirection-class"><a href="#3xx-Redirection-class" class="headerlink" title="3xx - Redirection class"></a>3xx - Redirection class</h2><p>These are used when the server found the requested resource somewhere else. 301 Moved Permanently. The server SHOULD generate a Location header field in the response containing a preferred URI reference for the new permanent URI.</p>
+<h2 id="4xx-Client-error-class"><a href="#4xx-Client-error-class" class="headerlink" title="4xx - Client error class"></a>4xx - Client error class</h2><p>The server retrieved a wrong request. 400 Bad Request, 401 Unauthorized, 403 Forbidden. 404 Not Found.</p>
+<h2 id="5xx-Server-error-class"><a href="#5xx-Server-error-class" class="headerlink" title="5xx - Server error class"></a>5xx - Server error class</h2><p>Something wrong happens on the server.</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Web/" rel="tag"># Web</a>
+              <a href="/tags/REST/" rel="tag"># REST</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2019/07/16/Java-Socket/" rel="next" title="Java Socket">
+      Java Socket <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-Origin"><span class="nav-number">1.</span> <span class="nav-text">1. Origin</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-Key-Concepts"><span class="nav-number">2.</span> <span class="nav-text">2. Key Concepts</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Client"><span class="nav-number">2.1.</span> <span class="nav-text">Client</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Resource"><span class="nav-number">2.2.</span> <span class="nav-text">Resource</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Representation"><span class="nav-number">2.3.</span> <span class="nav-text">Representation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Actions"><span class="nav-number">2.4.</span> <span class="nav-text">Actions</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-REST-vs-HTTP"><span class="nav-number">3.</span> <span class="nav-text">3. REST vs HTTP</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-REST-6-Constrains"><span class="nav-number">4.</span> <span class="nav-text">4. REST 6 Constrains</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Uniform-interface"><span class="nav-number">4.1.</span> <span class="nav-text">Uniform interface</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Client-Server-Spearation"><span class="nav-number">4.2.</span> <span class="nav-text">Client - Server Spearation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Stateless"><span class="nav-number">4.3.</span> <span class="nav-text">Stateless</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Layerd-system"><span class="nav-number">4.4.</span> <span class="nav-text">Layerd system</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Cacheable"><span class="nav-number">4.5.</span> <span class="nav-text">Cacheable</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Code-on-demand"><span class="nav-number">4.6.</span> <span class="nav-text">Code-on-demand</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HTTP-status-code"><span class="nav-number">5.</span> <span class="nav-text">HTTP status code</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2xx-Success-class"><span class="nav-number">5.1.</span> <span class="nav-text">2xx - Success class</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3xx-Redirection-class"><span class="nav-number">5.2.</span> <span class="nav-text">3xx - Redirection class</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4xx-Client-error-class"><span class="nav-number">5.3.</span> <span class="nav-text">4xx - Client error class</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5xx-Server-error-class"><span class="nav-number">5.4.</span> <span class="nav-text">5xx - Server error class</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Dafei Wang"
+      src="/images/avatar-png.png">
+  <p class="site-author-name" itemprop="name">Dafei Wang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dafei Wang</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+    </div>
+</body>
+</html>

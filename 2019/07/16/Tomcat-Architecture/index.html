@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Montserrat:300,300italic,400,400italic,700,700italic|Apercu Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"dafeiwang.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="1. A heigh-level ArchitectureOne basic functionality of the server is receiving requests from client, analyzing the requests, running busines logic and returning the result to the client.   start() me">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Tomcat Architecture">
+<meta property="og:url" content="https://dafeiwang.com/2019/07/16/Tomcat-Architecture/index.html">
+<meta property="og:site_name" content="Dafei&#39;s Blog">
+<meta property="og:description" content="1. A heigh-level ArchitectureOne basic functionality of the server is receiving requests from client, analyzing the requests, running busines logic and returning the result to the client.   start() me">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://dafeiwang.com/2019/07/16/Tomcat-Architecture/simple-server.png">
+<meta property="og:image" content="https://dafeiwang.com/2019/07/16/Tomcat-Architecture/server2.png">
+<meta property="og:image" content="https://dafeiwang.com/2019/07/16/Tomcat-Architecture/server3.png">
+<meta property="og:image" content="https://dafeiwang.com/2019/07/16/Tomcat-Architecture/server4.png">
+<meta property="og:image" content="https://dafeiwang.com/2019/07/16/Tomcat-Architecture/server5.png">
+<meta property="og:image" content="https://dafeiwang.com/2019/07/16/Tomcat-Architecture/server6.png">
+<meta property="og:image" content="https://dafeiwang.com/2019/07/16/Tomcat-Architecture/pipeline.png">
+<meta property="og:image" content="https://dafeiwang.com/2019/07/16/Tomcat-Architecture/connector.png">
+<meta property="og:image" content="https://dafeiwang.com/2019/07/16/Tomcat-Architecture/start.png">
+<meta property="og:image" content="https://dafeiwang.com/2019/07/16/Tomcat-Architecture/class-loader.png">
+<meta property="og:image" content="https://dafeiwang.com/2019/07/16/Tomcat-Architecture/catalina.png">
+<meta property="og:image" content="https://dafeiwang.com/2019/07/16/Tomcat-Architecture/cluster.png">
+<meta property="article:published_time" content="2019-07-16T20:06:12.000Z">
+<meta property="article:modified_time" content="2019-07-19T20:46:12.000Z">
+<meta property="article:author" content="Dafei Wang">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="Web">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://dafeiwang.com/2019/07/16/Tomcat-Architecture/simple-server.png">
+
+<link rel="canonical" href="https://dafeiwang.com/2019/07/16/Tomcat-Architecture/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Tomcat Architecture | Dafei's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Dafei's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://dafeiwang.com/2019/07/16/Tomcat-Architecture/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar-png.png">
+      <meta itemprop="name" content="Dafei Wang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dafei's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Tomcat Architecture
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-07-16 21:06:12" itemprop="dateCreated datePublished" datetime="2019-07-16T21:06:12+01:00">2019-07-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-07-19 21:46:12" itemprop="dateModified" datetime="2019-07-19T21:46:12+01:00">2019-07-19</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Web/" itemprop="url" rel="index"><span itemprop="name">Web</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="1-A-heigh-level-Architecture"><a href="#1-A-heigh-level-Architecture" class="headerlink" title="1. A heigh-level Architecture"></a>1. A heigh-level Architecture</h1><p>One basic functionality of the server is receiving requests from client, analyzing the requests, running busines logic and returning the result to the client.</p>
+<img src="/2019/07/16/Tomcat-Architecture/simple-server.png" class="" title="simple server">
+
+<p>start() method starts server, opens socket, listens on port number, processes requests and responds to client. And stop() method stops the server and releses the resources.</p>
+<a id="more"></a>
+<h2 id="Componets"><a href="#Componets" class="headerlink" title="Componets"></a>Componets</h2><h3 id="Connector-and-Container"><a href="#Connector-and-Container" class="headerlink" title="Connector and Container"></a>Connector and Container</h3><p>We realize that the scalalibility is not good if we put listening functionality and processing logic together. For example, we want to support mutliple network protocol but the processing logic is identical. Tomcat supports either HTTP protocol or AJP.</p>
+<p>Now we separate network protocol and business logic.</p>
+<img src="/2019/07/16/Tomcat-Architecture/server2.png" class="">
+
+<p>One server can include multiple Connector and Container. Connector listens on requests and responses data. Container takes care of processing requests. </p>
+<p>There is one disadvantage of this design. How do we map connector to container.</p>
+<img src="/2019/07/16/Tomcat-Architecture/server3.png" class="">
+
+<p>One Server includes multiple Service. A Service associates one or more Connectors to a Engine. Thus, requests comming to the Connectors will be handled by the Container.</p>
+<p>We rename Containe to Engine.</p>
+<h3 id="Container-design"><a href="#Container-design" class="headerlink" title="Container design"></a>Container design</h3><p>We have decoupled network protocol and container. Application server is used to deploy Web application. So Engine needs to manage multiple web application. When it receives a request, it needs to find an appropriate web application to handle this request.</p>
+<img src="/2019/07/16/Tomcat-Architecture/server4.png" class="" title="simple server 4">
+
+<p>We use Context to represent a Web application. One Engine can include multiple Context.</p>
+<p>Next, we want to support virtual host. So we add Host between Engine and Context.</p>
+<p>As we know that one Web application can contain mutltiple Servlet instances. So, we add Wrapper to represent servlet.</p>
+<img src="/2019/07/16/Tomcat-Architecture/server5.png" class="" title="simple server 5">
+
+<p>Tomcat refers to Engine, Host, Context, and Cluster, as container. The highest-level is Engine; while the lowest-level is Context. Certain components, such as Realm and Valve, can be placed in a container.</p>
+<img src="/2019/07/16/Tomcat-Architecture/server6.png" class="" title="simple server 6">
+
+<h3 id="Init-Flow"><a href="#Init-Flow" class="headerlink" title="Init Flow"></a>Init Flow</h3><h4 id="Bootstrap"><a href="#Bootstrap" class="headerlink" title="Bootstrap"></a>Bootstrap</h4><p>Bootstrap.init() method: Initalize class loader and create Catalina object and assign it to a class private attribute</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> Object catalinaDaemon</span><br><span class="line"><span class="comment">//...</span></span><br><span class="line">initClassLoaders();</span><br><span class="line">Class&lt;?&gt; startupClass = catalinaLoader.loadClass(<span class="string">&quot;org.apache.catalina.startup.Catalina&quot;</span>);</span><br><span class="line">Object startupInstance = startupClass.getConstructor().newInstance();</span><br><span class="line"><span class="comment">//...</span></span><br><span class="line">catalinaDaemon = startupInstance;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">...<span class="keyword">if</span> (command.equals(<span class="string">&quot;start&quot;</span>)) &#123;</span><br><span class="line">               daemon.setAwait(<span class="keyword">true</span>);</span><br><span class="line">               daemon.load(args);</span><br><span class="line">               daemon.start();</span><br><span class="line">               <span class="keyword">if</span> (<span class="keyword">null</span> == daemon.getServer()) &#123;</span><br><span class="line">                   System.exit(<span class="number">1</span>);</span><br><span class="line">               &#125;</span><br></pre></td></tr></table></figure>
+
+<p>Bootstrap.load(args): Use reflection to call load method of Catalina object. Catalina object is created in init method.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">String methodName = <span class="string">&quot;load&quot;</span>;</span><br><span class="line">Method method = catalinaDaemon.getClass().getMethod(methodName, paramTypes);</span><br><span class="line"><span class="keyword">if</span> (log.isDebugEnabled())</span><br><span class="line">    log.debug(<span class="string">&quot;Calling startup class &quot;</span> + method);</span><br><span class="line">method.invoke(catalinaDaemon, param);</span><br></pre></td></tr></table></figure>
+
+<p>Same here, we call start of catalina object.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Start the Catalina daemon.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> Exception Fatal start error</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>( catalinaDaemon==<span class="keyword">null</span> ) init();</span><br><span class="line"></span><br><span class="line">    Method method = catalinaDaemon.getClass().getMethod(<span class="string">&quot;start&quot;</span>, (Class [] )<span class="keyword">null</span>);</span><br><span class="line">    method.invoke(catalinaDaemon, (Object [])<span class="keyword">null</span>);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Catalina"><a href="#Catalina" class="headerlink" title="Catalina"></a>Catalina</h4><p>Bootstrap main method call Catalina load and start method. The following is the main logic of load method.<br>As we can see, it does two things: create Digester object and invoke init method of Server.</p>
+<p>Catalina.load():</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Digester digester = createStartDigester();</span><br><span class="line">inputSource.setByteStream(inputStream);</span><br><span class="line">digester.push(<span class="keyword">this</span>);</span><br><span class="line">digester.parse(inputSource);</span><br><span class="line">getServer().setCatalina(<span class="keyword">this</span>);</span><br><span class="line">getServer().init();</span><br></pre></td></tr></table></figure>
+
+<p>Catalina.start(): It mainly starts the StandardServer</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getServer().start();</span><br></pre></td></tr></table></figure>
+
+<h4 id="init-start-method"><a href="#init-start-method" class="headerlink" title="init/start method"></a>init/start method</h4><p>Now, we know Catalina class init and start the server, but we don’t find init/start method in StandardServer class, thus we know these methods are implemented in this parent class. We go to its parent’s parent’s class LifecycleBase and find init/start implementation.</p>
+<p>LifecycleBase.init()</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> <span class="keyword">throws</span> LifecycleException </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!state.equals(LifecycleState.NEW)) &#123;</span><br><span class="line">        invalidTransition(Lifecycle.BEFORE_INIT_EVENT);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        setStateInternal(LifecycleState.INITIALIZING, <span class="keyword">null</span>, <span class="keyword">false</span>);</span><br><span class="line">        initInternal();</span><br><span class="line">        setStateInternal(LifecycleState.INITIALIZED, <span class="keyword">null</span>, <span class="keyword">false</span>);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Throwable t) &#123;</span><br><span class="line">        handleSubClassException(t, <span class="string">&quot;lifecycleBase.initFail&quot;</span>, toString());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>StandardServer、StandardService、StandardEngine、StandardHost、StandardContext. They all implement abstract class LifecycleBase initInternal(). Similarily, there is startInternal() in start() method.</p>
+<p>Let’s take a look at StandardServer class initInternal() method. Main logic is as follow:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; services.length; i++) &#123;</span><br><span class="line">    services[i].init();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>startInternal()</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Start our defined Services</span></span><br><span class="line"><span class="keyword">synchronized</span> (servicesLock) &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; services.length; i++) &#123;</span><br><span class="line">        services[i].start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Now, let’s take a look at StandardService.initInternal() and startInternal()</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initInternal</span><span class="params">()</span> <span class="keyword">throws</span> LifecycleException </span>&#123;</span><br><span class="line"></span><br><span class="line">       <span class="keyword">super</span>.initInternal();</span><br><span class="line"></span><br><span class="line">       <span class="keyword">if</span> (engine != <span class="keyword">null</span>) &#123;</span><br><span class="line">           engine.init();</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="comment">// Initialize any Executors</span></span><br><span class="line">       <span class="keyword">for</span> (Executor executor : findExecutors()) &#123;</span><br><span class="line">           <span class="keyword">if</span> (executor <span class="keyword">instanceof</span> JmxEnabled) &#123;</span><br><span class="line">               ((JmxEnabled) executor).setDomain(getDomain());</span><br><span class="line">           &#125;</span><br><span class="line">           executor.init();</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="comment">// Initialize mapper listener</span></span><br><span class="line">       mapperListener.init();</span><br><span class="line"></span><br><span class="line">       <span class="comment">// Initialize our defined Connectors</span></span><br><span class="line">       <span class="keyword">synchronized</span> (connectorsLock) &#123;</span><br><span class="line">           <span class="keyword">for</span> (Connector connector : connectors) &#123;</span><br><span class="line">               connector.init();</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">startInternal</span><span class="params">()</span> <span class="keyword">throws</span> LifecycleException </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(log.isInfoEnabled())</span><br><span class="line">        log.info(sm.getString(<span class="string">&quot;standardService.start.name&quot;</span>, <span class="keyword">this</span>.name));</span><br><span class="line">    setState(LifecycleState.STARTING);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Start our defined Container first</span></span><br><span class="line">    <span class="keyword">if</span> (engine != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (engine) &#123;</span><br><span class="line">            engine.start();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">synchronized</span> (executors) &#123;</span><br><span class="line">        <span class="keyword">for</span> (Executor executor: executors) &#123;</span><br><span class="line">            executor.start();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    mapperListener.start();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Start our defined Connectors second</span></span><br><span class="line">    <span class="keyword">synchronized</span> (connectorsLock) &#123;</span><br><span class="line">        <span class="keyword">for</span> (Connector connector: connectors) &#123;</span><br><span class="line">            <span class="comment">// If it has already failed, don&#x27;t try and start it</span></span><br><span class="line">            <span class="keyword">if</span> (connector.getState() != LifecycleState.FAILED) &#123;</span><br><span class="line">                connector.start();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>StandardEngine.startInternal(). start multithreaded to start child</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Start our child containers, if any</span></span><br><span class="line">Container children[] = findChildren();</span><br><span class="line">List&lt;Future&lt;Void&gt;&gt; results = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; children.length; i++) &#123;</span><br><span class="line">    results.add(startStopExecutor.submit(<span class="keyword">new</span> StartChild(children[i])));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p>-&gt; Connector.initInternal()</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> Adapter adapter = <span class="keyword">null</span>;</span><br><span class="line">adapter = <span class="keyword">new</span> CoyoteAdapter(<span class="keyword">this</span>);</span><br><span class="line">protocolHandler.setAdapter(adapter);</span><br><span class="line">protocolHandler.init();</span><br></pre></td></tr></table></figure>
+<p>-&gt; AbstractProtocol.init()</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> AbstractEndpoint&lt;S,?&gt; endpoint;</span><br><span class="line">endpoint.init();</span><br></pre></td></tr></table></figure>
+<p>-&gt; AbstractEndpoint.init()</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (bindOnInit) &#123;</span><br><span class="line">    bindWithCleanup();</span><br><span class="line">    bindState = BindState.BOUND_ON_INIT;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>-&gt; NioEndpoint.bind()  (template pattern)</p>
+<h4 id="Lifecycle"><a href="#Lifecycle" class="headerlink" title="Lifecycle"></a>Lifecycle</h4><p>Lifecycle interface defines init and start methods. Also, it defines the following methods:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Add a LifecycleEvent listener to this component.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> listener The listener to add</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addLifecycleListener</span><span class="params">(LifecycleListener listener)</span></span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Get the life cycle listeners associated with this life cycle.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> An array containing the life cycle listeners associated with this</span></span><br><span class="line"><span class="comment"> *         life cycle. If this component has no listeners registered, a</span></span><br><span class="line"><span class="comment"> *         zero-length array is returned.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> LifecycleListener[] findLifecycleListeners();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Remove a LifecycleEvent listener from this component.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> listener The listener to remove</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">removeLifecycleListener</span><span class="params">(LifecycleListener listener)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>LifecycleListener</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">LifecycleListener</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Acknowledge the occurrence of the specified event.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> event LifecycleEvent that has occurred</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">lifecycleEvent</span><span class="params">(LifecycleEvent event)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Observer pattern. When any events happen, listeners will get notified. Now, let’s take a look at LifecycleEvent. It encapsulates Lifecycle as event source.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">LifecycleEvent</span> <span class="keyword">extends</span> <span class="title">EventObject</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">1L</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Construct a new LifecycleEvent with the specified parameters.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> lifecycle Component on which this event occurred</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> type Event type (required)</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> data Event data (if any)</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">LifecycleEvent</span><span class="params">(Lifecycle lifecycle, String type, Object data)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(lifecycle);</span><br><span class="line">        <span class="keyword">this</span>.type = type;</span><br><span class="line">        <span class="keyword">this</span>.data = data;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * The event data associated with this event.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Object data;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * The event type this instance represents.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String type;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> the event data of this event.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">getData</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> data;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> the Lifecycle on which this event occurred.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Lifecycle <span class="title">getLifecycle</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (Lifecycle) getSource();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> the event type of this event.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getType</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.type;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Remember that in startInteral method. fireLifecycelEvent is a method from LifecycleBase. setState() method basically notifies its listeners.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">startInternal</span><span class="params">()</span> <span class="keyword">throws</span> LifecycleException </span>&#123;</span><br><span class="line"></span><br><span class="line">       fireLifecycleEvent(CONFIGURE_START_EVENT, <span class="keyword">null</span>);</span><br><span class="line">       setState(LifecycleState.STARTING);</span><br><span class="line">      <span class="comment">//...</span></span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Allow sub classes to fire &#123;<span class="doctag">@link</span> Lifecycle&#125; events.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> type  Event type</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> data  Data associated with event.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">fireLifecycleEvent</span><span class="params">(String type, Object data)</span> </span>&#123;</span><br><span class="line">    LifecycleEvent event = <span class="keyword">new</span> LifecycleEvent(<span class="keyword">this</span>, type, data);</span><br><span class="line">    <span class="keyword">for</span> (LifecycleListener listener : lifecycleListeners) &#123;</span><br><span class="line">        listener.lifecycleEvent(event);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addLifecycleListener</span><span class="params">(LifecycleListener listener)</span> </span>&#123;</span><br><span class="line">    lifecycleListeners.add(listener);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="StandardServer-await-and-stopServer"><a href="#StandardServer-await-and-stopServer" class="headerlink" title="StandardServer.await() and stopServer()"></a>StandardServer.await() and stopServer()</h4><p>Tomcat has one user thread and five daemon threads. Once the user thread stops, the whole appliation stops.</p>
+<p>In StandardServer.await(), it actaully listens on port 8005 and waiting for SHUTDOWN command. </p>
+<p>Catalina has a method called stopServer. It send SHUTDOWN to the socket.</p>
+<h3 id="Request-flow"><a href="#Request-flow" class="headerlink" title="Request flow"></a>Request flow</h3><h4 id="Convert-socket-to-internal-request-object"><a href="#Convert-socket-to-internal-request-object" class="headerlink" title="Convert socket to internal request object"></a>Convert socket to internal request object</h4><p>In Tomcat Catalina class, it will trigger ConnectorCreateRule class begin() method.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">digester.addRule(<span class="string">&quot;Server/Service/Connector&quot;</span>,</span><br><span class="line">                 <span class="keyword">new</span> ConnectorCreateRule());</span><br><span class="line">digester.addRule(<span class="string">&quot;Server/Service/Connector&quot;</span>,</span><br><span class="line">                 <span class="keyword">new</span> SetAllPropertiesRule(<span class="keyword">new</span> String[]&#123;<span class="string">&quot;executor&quot;</span>&#125;));</span><br><span class="line">digester.addSetNext(<span class="string">&quot;Server/Service/Connector&quot;</span>,</span><br><span class="line">                    <span class="string">&quot;addConnector&quot;</span>,</span><br><span class="line">                    <span class="string">&quot;org.apache.catalina.connector.Connector&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>begind() method:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ...</span></span><br><span class="line">Connector con = <span class="keyword">new</span> Connector(attributes.getValue(<span class="string">&quot;protocol&quot;</span>));</span><br><span class="line"><span class="comment">// ...</span></span><br></pre></td></tr></table></figure>
+<p>By default, attribute protocol is read from server.xml</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">Connector</span> <span class="attr">port</span>=<span class="string">&quot;8080&quot;</span> <span class="attr">protocol</span>=<span class="string">&quot;HTTP/1.1&quot;</span></span></span><br><span class="line"><span class="tag">               <span class="attr">connectionTimeout</span>=<span class="string">&quot;20000&quot;</span></span></span><br><span class="line"><span class="tag">               <span class="attr">redirectPort</span>=<span class="string">&quot;8443&quot;</span> /&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">Connector</span> <span class="attr">port</span>=<span class="string">&quot;8009&quot;</span> <span class="attr">protocol</span>=<span class="string">&quot;AJP/1.3&quot;</span> <span class="attr">redirectPort</span>=<span class="string">&quot;8443&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>Connector constructor will initialize a protocolHandler instance. ProtocolHandler will initailize an Endpoint</p>
+<p>In Connector class startInternal method, it calls protocolHandler start() method. Http11Protocol doesn’t have start method, so it will invoke its parent class AbstractProtocol start() method.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (getLog().isInfoEnabled()) &#123;</span><br><span class="line">        getLog().info(sm.getString(<span class="string">&quot;abstractProtocolHandler.start&quot;</span>, getName()));</span><br><span class="line">        logPortOffset();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    endpoint.start();</span><br><span class="line">    monitorFuture = getUtilityExecutor().scheduleWithFixedDelay(</span><br><span class="line">            <span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                    <span class="keyword">if</span> (!isPaused()) &#123;</span><br><span class="line">                        startAsyncTimeout();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;, <span class="number">0</span>, <span class="number">60</span>, TimeUnit.SECONDS);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>As we see above, AbstractProtocol starts Endpoint (e.g. NioEndpoint)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Start the NIO endpoint, creating acceptor, poller threads.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">startInternal</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!running) &#123;</span><br><span class="line">        running = <span class="keyword">true</span>;</span><br><span class="line">        paused = <span class="keyword">false</span>;</span><br><span class="line"></span><br><span class="line">        processorCache = <span class="keyword">new</span> SynchronizedStack&lt;&gt;(SynchronizedStack.DEFAULT_SIZE,</span><br><span class="line">                socketProperties.getProcessorCache());</span><br><span class="line">        eventCache = <span class="keyword">new</span> SynchronizedStack&lt;&gt;(SynchronizedStack.DEFAULT_SIZE,</span><br><span class="line">                        socketProperties.getEventCache());</span><br><span class="line">        nioChannels = <span class="keyword">new</span> SynchronizedStack&lt;&gt;(SynchronizedStack.DEFAULT_SIZE,</span><br><span class="line">                socketProperties.getBufferPool());</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Create worker collection</span></span><br><span class="line">        <span class="keyword">if</span> ( getExecutor() == <span class="keyword">null</span> ) &#123;</span><br><span class="line">            createExecutor();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        initializeConnectionLatch();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Start poller threads</span></span><br><span class="line">        pollers = <span class="keyword">new</span> Poller[getPollerThreadCount()];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;pollers.length; i++) &#123;</span><br><span class="line">            pollers[i] = <span class="keyword">new</span> Poller();</span><br><span class="line">            Thread pollerThread = <span class="keyword">new</span> Thread(pollers[i], getName() + <span class="string">&quot;-ClientPoller-&quot;</span>+i);</span><br><span class="line">            pollerThread.setPriority(threadPriority);</span><br><span class="line">            pollerThread.setDaemon(<span class="keyword">true</span>);</span><br><span class="line">            pollerThread.start();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        startAcceptorThreads();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Endpoint starts multiple pollers thread and multiple acceptor thread. Acceptor spawns ServerSocket. And register the newly created socket to poller. It converts socket to a socketWrapper.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">        * Registers a newly created socket with the poller.</span></span><br><span class="line"><span class="comment">        *</span></span><br><span class="line"><span class="comment">        * <span class="doctag">@param</span> socket    The newly created socket</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">register</span><span class="params">(<span class="keyword">final</span> NioChannel socket)</span> </span>&#123;</span><br><span class="line">           socket.setPoller(<span class="keyword">this</span>);</span><br><span class="line">           NioSocketWrapper socketWrapper = <span class="keyword">new</span> NioSocketWrapper(socket, NioEndpoint.<span class="keyword">this</span>);</span><br><span class="line">           socket.setSocketWrapper(socketWrapper);</span><br><span class="line">           socketWrapper.setPoller(<span class="keyword">this</span>);</span><br><span class="line">           socketWrapper.setReadTimeout(getConnectionTimeout());</span><br><span class="line">           socketWrapper.setWriteTimeout(getConnectionTimeout());</span><br><span class="line">           socketWrapper.setKeepAliveLeft(NioEndpoint.<span class="keyword">this</span>.getMaxKeepAliveRequests());</span><br><span class="line">           socketWrapper.setSecure(isSSLEnabled());</span><br><span class="line">           PollerEvent r = eventCache.pop();</span><br><span class="line">           socketWrapper.interestOps(SelectionKey.OP_READ);<span class="comment">//this is what OP_REGISTER turns into.</span></span><br><span class="line">           <span class="keyword">if</span> (r == <span class="keyword">null</span>) &#123;</span><br><span class="line">               r = <span class="keyword">new</span> PollerEvent(socket, socketWrapper, OP_REGISTER);</span><br><span class="line">           &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">               r.reset(socket, socketWrapper, OP_REGISTER);</span><br><span class="line">           &#125;</span><br><span class="line">           addEvent(r);</span><br><span class="line">       &#125;</span><br></pre></td></tr></table></figure>
+
+<p>Now, let’s take a look at Http11Processor.service method and Http11InputBuffer.parseRequestLine() method. These two methods bacially construct a org.apache.coyote.Request object with the socket.</p>
+<h4 id="Request-object-from-connector-to-Engine-Host-Context-Wrapper"><a href="#Request-object-from-connector-to-Engine-Host-Context-Wrapper" class="headerlink" title="Request object from connector to Engine, Host, Context, Wrapper"></a>Request object from connector to Engine, Host, Context, Wrapper</h4><p>In Http11Processor.service method, we have the following code:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Process the request in the adapter</span></span><br><span class="line">            <span class="keyword">if</span> (getErrorState().isIoAllowed()) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    rp.setStage(org.apache.coyote.Constants.STAGE_SERVICE);</span><br><span class="line">                    getAdapter().service(request, response);</span><br><span class="line"><span class="comment">//...</span></span><br></pre></td></tr></table></figure>
+<p>AbstractProtocol create processor and it passes its adapter attribute to processor. See below: </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> Processor <span class="title">createProcessor</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Http11Processor processor = <span class="keyword">new</span> Http11Processor(<span class="keyword">this</span>, adapter);</span><br><span class="line">    <span class="keyword">return</span> processor;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>So, where does adapter is created for abstract protocol? It’s in Connector initInternal method.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">// Initialize adapter</span></span><br><span class="line">adapter = <span class="keyword">new</span> CoyoteAdapter(<span class="keyword">this</span>);</span><br><span class="line">protocolHandler.setAdapter(adapter);</span><br></pre></td></tr></table></figure>
+
+<p>Now, we knows that processor service method actually calls service method in org.apache.catalina.connector.CoyoteAdapter.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(org.apache.coyote.Request req, org.apache.coyote.Response res)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">    <span class="comment">// Parse and set Catalina and configuration specific</span></span><br><span class="line">    <span class="comment">// request parameters</span></span><br><span class="line">    postParseSuccess = postParseRequest(req, request, res, response);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>This service method convert org.apache.coyote.Request to org.apache.catalina.connector.Request. The postParseRequest method set attributes of connector.Request object. </p>
+<p>Inisde CoyoteAdapter.postParseRequest method, it calls connector’s mapper class method map.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// This will map the the latest version by default</span></span><br><span class="line">connector.getMapper().map(serverName, decodedURI, version, request.getMappingData());</span><br></pre></td></tr></table></figure>
+
+<p>And map method calls internalMap method. what internalMap does is to set mappingData such as mappingData.host、mappingData.contextPath、mappingData.contexts、mappingData.wrapper</p>
+<p>Next, we’ll take a look at how host, context, wrapper get loaded. As we mentioned earlier, StandardService.startInternal method calls mapperListener.start(). Let’s take a look at startInternal method of mapper listener.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">startInternal</span><span class="params">()</span> <span class="keyword">throws</span> LifecycleException </span>&#123;</span><br><span class="line"></span><br><span class="line">       setState(LifecycleState.STARTING);</span><br><span class="line"></span><br><span class="line">       Engine engine = service.getContainer();</span><br><span class="line">       <span class="keyword">if</span> (engine == <span class="keyword">null</span>) &#123;</span><br><span class="line">           <span class="keyword">return</span>;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       findDefaultHost();</span><br><span class="line"></span><br><span class="line">       addListeners(engine);</span><br><span class="line"></span><br><span class="line">       Container[] conHosts = engine.findChildren();</span><br><span class="line">       <span class="keyword">for</span> (Container conHost : conHosts) &#123;</span><br><span class="line">           Host host = (Host) conHost;</span><br><span class="line">           <span class="keyword">if</span> (!LifecycleState.NEW.equals(host.getState())) &#123;</span><br><span class="line">               <span class="comment">// Registering the host will register the context and wrappers</span></span><br><span class="line">               registerHost(host);</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>Tomcat regsiters Host, Context, Wrapper into a Mapper object. One Service has one Engine and multiple connectors. One Engine has mutliple Host. One host has multiple Context. One Context has multiple Wrapper. Tomcat’s Map mechanism maps the incoming request to the correct Wrapper.</p>
+<h3 id="Pipeline-and-Valve"><a href="#Pipeline-and-Valve" class="headerlink" title="Pipeline and Valve"></a>Pipeline and Valve</h3><p>Tomcat uses Chain of Responsibility Pattern to improve compoennt flexiblility and scalability. </p>
+<p>Tomcat defines a Pipeline and a Valve. Pipeline is used to construct chain of responsibility and valve represents processor on its chain.</p>
+<img src="/2019/07/16/Tomcat-Architecture/pipeline.png" class="" title="pipeline">
+
+
+<p>After Tomcat’s Connector converts Request, it will handle the request to Engine’s Pipeline and Valve. Request in Engine’s Pipeline will be delivered to Host Pipeline, etc.</p>
+<p>Inside service method of CoyoteAdapter, there is the following invocation.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">connector.getService().getContainer().getPipeline().isAsyncSupported());</span><br></pre></td></tr></table></figure>
+<p>There is an addValve method in StandardPipeline class. In the default constructor of StandardEngine:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Create a new StandardEngine component with the default basic Valve.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">StandardEngine</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">super</span>();</span><br><span class="line">        pipeline.setBasic(<span class="keyword">new</span> StandardEngineValve());</span><br><span class="line">        <span class="comment">/* Set the jmvRoute using the system property jvmRoute */</span></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            setJvmRoute(System.getProperty(<span class="string">&quot;jvmRoute&quot;</span>));</span><br><span class="line">        &#125; <span class="keyword">catch</span>(Exception ex) &#123;</span><br><span class="line">            log.warn(sm.getString(<span class="string">&quot;standardEngine.jvmRouteFail&quot;</span>));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// By default, the engine will hold the reloading thread</span></span><br><span class="line">        backgroundProcessorDelay = <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>StandardEngineValve’s invoke method calls StandardHost’s pipeline, and StandardContext, StandardWrapper. </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">invoke</span><span class="params">(Request request, Response response)</span></span></span><br><span class="line"><span class="function">       <span class="keyword">throws</span> IOException, ServletException </span>&#123;</span><br><span class="line"></span><br><span class="line">       <span class="comment">// Select the Host to be used for this Request</span></span><br><span class="line">       Host host = request.getHost();</span><br><span class="line">       <span class="keyword">if</span> (host == <span class="keyword">null</span>) &#123;</span><br><span class="line">           <span class="comment">// HTTP 0.9 or HTTP 1.0 request without a host when no default host</span></span><br><span class="line">           <span class="comment">// is defined. This is handled by the CoyoteAdapter.</span></span><br><span class="line">           <span class="keyword">return</span>;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">if</span> (request.isAsyncSupported()) &#123;</span><br><span class="line">           request.setAsyncSupported(host.getPipeline().isAsyncSupported());</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="comment">// Ask this Host to process this request</span></span><br><span class="line">       host.getPipeline().getFirst().invoke(request, response);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Web-deployment"><a href="#Web-deployment" class="headerlink" title="Web deployment"></a>Web deployment</h3><p>There is no context configured in server.xml. How does tomcat deploy context? We all knows that Tomcat server find the context object (default: StandardContext) based on url. In Tomcat, all default container component StandardEngine, StandardHost, StandardContext, StandardWrapper inherit org.apache.catalina.core.ContainerBase. These default container component all call parent’s startInternal method in their own startInternal method.</p>
+<p>startInternal method in ContainerBase:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Start the Valves in our pipeline (including the basic), if any</span></span><br><span class="line">      <span class="keyword">if</span> (pipeline <span class="keyword">instanceof</span> Lifecycle) &#123;</span><br><span class="line">          ((Lifecycle) pipeline).start();</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      setState(LifecycleState.STARTING);</span><br><span class="line"></span><br><span class="line">      <span class="comment">// Start our thread</span></span><br><span class="line">      <span class="keyword">if</span> (backgroundProcessorDelay &gt; <span class="number">0</span>) &#123;</span><br><span class="line">          monitorFuture = Container.getService(ContainerBase.<span class="keyword">this</span>).getServer()</span><br><span class="line">                  .getUtilityExecutor().scheduleWithFixedDelay(</span><br><span class="line">                          <span class="keyword">new</span> ContainerBackgroundProcessorMonitor(), <span class="number">0</span>, <span class="number">60</span>, TimeUnit.SECONDS);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>We navigate to ContainerBackgroundProcessor class. </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">processChildren</span><span class="params">(Container container)</span> </span>&#123;</span><br><span class="line">            ClassLoader originalClassLoader = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (container <span class="keyword">instanceof</span> Context) &#123;</span><br><span class="line">                    Loader loader = ((Context) container).getLoader();</span><br><span class="line">                    <span class="comment">// Loader will be null for FailedContext instances</span></span><br><span class="line">                    <span class="keyword">if</span> (loader == <span class="keyword">null</span>) &#123;</span><br><span class="line">                        <span class="keyword">return</span>;</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                    <span class="comment">// Ensure background processing for Contexts and Wrappers</span></span><br><span class="line">                    <span class="comment">// is performed under the web app&#x27;s class loader</span></span><br><span class="line">                    originalClassLoader = ((Context) container).bind(<span class="keyword">false</span>, <span class="keyword">null</span>);</span><br><span class="line">                &#125;</span><br><span class="line">                container.backgroundProcess();</span><br><span class="line">                Container[] children = container.findChildren();</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; children.length; i++) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (children[i].getBackgroundProcessorDelay() &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">                        processChildren(children[i]);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Throwable t) &#123;</span><br><span class="line">                ExceptionUtils.handleThrowable(t);</span><br><span class="line">                log.error(sm.getString(<span class="string">&quot;containerBase.backgroundProcess.error&quot;</span>), t);</span><br><span class="line">            &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (container <span class="keyword">instanceof</span> Context) &#123;</span><br><span class="line">                    ((Context) container).unbind(<span class="keyword">false</span>, originalClassLoader);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<p>This method call its backgroundProcess method and then process its children. The backgroundProcess in ContainerBase will fire an PERIODIC_EVENT event.</p>
+<p>In Catalina class, there is one line of code:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">digester.addRuleSet(<span class="keyword">new</span> HostRuleSet(<span class="string">&quot;Server/Service/Engine/&quot;</span>));</span><br></pre></td></tr></table></figure>
+
+<p>org.apache.catalina.startup.HostConfig is added as a listern to StandardHost.</p>
+<p>In lifecycleEvent method</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Process the event that has occurred</span></span><br><span class="line">       <span class="keyword">if</span> (event.getType().equals(Lifecycle.PERIODIC_EVENT)) &#123;</span><br><span class="line">           check();</span><br><span class="line">       &#125; <span class="keyword">else</span> <span class="keyword">if</span> (event.getType().equals(Lifecycle.BEFORE_START_EVENT)) &#123;</span><br><span class="line">           beforeStart();</span><br><span class="line">       &#125; <span class="keyword">else</span> <span class="keyword">if</span> (event.getType().equals(Lifecycle.START_EVENT)) &#123;</span><br><span class="line">           start();</span><br><span class="line">       &#125; <span class="keyword">else</span> <span class="keyword">if</span> (event.getType().equals(Lifecycle.STOP_EVENT)) &#123;</span><br><span class="line">           stop();</span><br><span class="line">       &#125;</span><br></pre></td></tr></table></figure>
+<p>The check method will deploy web app.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">   * Deploy applications for any directories or WAR files that are found</span></span><br><span class="line"><span class="comment">   * in our &quot;application root&quot; directory.</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">deployApps</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">      File appBase = host.getAppBaseFile();</span><br><span class="line">      File configBase = host.getConfigBaseFile();</span><br><span class="line">      String[] filteredAppPaths = filterAppPaths(appBase.list());</span><br><span class="line">      <span class="comment">// Deploy XML descriptors from configBase</span></span><br><span class="line">      deployDescriptors(configBase, configBase.list());</span><br><span class="line">      <span class="comment">// Deploy WARs</span></span><br><span class="line">      deployWARs(appBase, filteredAppPaths);</span><br><span class="line">      <span class="comment">// Deploy expanded folders</span></span><br><span class="line">      deployDirectories(appBase, filteredAppPaths);</span><br><span class="line"></span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>Navigate into deploy methods</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Class&lt;?&gt; clazz = Class.forName(host.getConfigClass());</span><br><span class="line">LifecycleListener listener = (LifecycleListener) clazz.getConstructor().newInstance();</span><br><span class="line">context.addLifecycleListener(listener);</span><br><span class="line"></span><br><span class="line">context.setName(cn.getName());</span><br><span class="line">context.setPath(cn.getPath());</span><br><span class="line">context.setWebappVersion(cn.getVersion());</span><br><span class="line">context.setDocBase(cn.getBaseName() + <span class="string">&quot;.war&quot;</span>);</span><br><span class="line">host.addChild(context);</span><br></pre></td></tr></table></figure>
+
+<p>host.getConfigClass returns a ContextConfig object. The addChild method will start the parameter Context object. The starting process will emit a set of events: BEFORE_INIT_EVENT、AFTER_INIT_EVENT、BEFORE_START_EVENT、CONFIGURE_START_EVENT、START_EVENT、AFTER_START_EVENT.</p>
+<p>ContextConfig was added as a listener into context. So ContextConfig will be triggered.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Process the event that has occurred</span></span><br><span class="line">        <span class="keyword">if</span> (event.getType().equals(Lifecycle.CONFIGURE_START_EVENT)) &#123;</span><br><span class="line">            configureStart();</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (event.getType().equals(Lifecycle.BEFORE_START_EVENT)) &#123;</span><br><span class="line">            beforeStart();</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (event.getType().equals(Lifecycle.AFTER_START_EVENT)) &#123;</span><br><span class="line">            <span class="comment">// Restore docBase for management tools</span></span><br><span class="line">            <span class="keyword">if</span> (originalDocBase != <span class="keyword">null</span>) &#123;</span><br><span class="line">                context.setDocBase(originalDocBase);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (event.getType().equals(Lifecycle.CONFIGURE_STOP_EVENT)) &#123;</span><br><span class="line">            configureStop();</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (event.getType().equals(Lifecycle.AFTER_INIT_EVENT)) &#123;</span><br><span class="line">            init();</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (event.getType().equals(Lifecycle.AFTER_DESTROY_EVENT)) &#123;</span><br><span class="line">            destroy();</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<p>The configureStart method will parse web.xml to a webXml object to get servlet and filter configuration. And it will set context object.</p>
+<p>When will Servlet, Listener, Filter get started? It’s in StandardContext.startInternal().</p>
+<p>The startInternal() of StandardContext</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">// Notify our interested LifecycleListeners</span></span><br><span class="line">fireLifecycleEvent(Lifecycle.CONFIGURE_START_EVENT, <span class="keyword">null</span>);</span><br><span class="line"><span class="comment">//...</span></span><br><span class="line"><span class="comment">// Configure and call application event listeners</span></span><br><span class="line">            <span class="keyword">if</span> (ok) &#123;</span><br><span class="line">                <span class="keyword">if</span> (!listenerStart()) &#123;</span><br><span class="line">                    log.error(sm.getString(<span class="string">&quot;standardContext.listenerFail&quot;</span>));</span><br><span class="line">                    ok = <span class="keyword">false</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Configure and call application filters</span></span><br><span class="line">            <span class="keyword">if</span> (ok) &#123;</span><br><span class="line">                <span class="keyword">if</span> (!filterStart()) &#123;</span><br><span class="line">                    log.error(sm.getString(<span class="string">&quot;standardContext.filterFail&quot;</span>));</span><br><span class="line">                    ok = <span class="keyword">false</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// Load and initialize all &quot;load on startup&quot; servlets</span></span><br><span class="line">            <span class="keyword">if</span> (ok) &#123;</span><br><span class="line">                <span class="keyword">if</span> (!loadOnStartup(findChildren()))&#123;</span><br><span class="line">                    log.error(sm.getString(<span class="string">&quot;standardContext.servletFail&quot;</span>));</span><br><span class="line">                    ok = <span class="keyword">false</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>A request will call org.apache.catalina.core.StandardWrapperValve invoke method eventually. It’ll call Servlet service method.</p>
+<h3 id="Connector-design"><a href="#Connector-design" class="headerlink" title="Connector design"></a>Connector design</h3><p>The responsibilities of Connector includes:</p>
+<ul>
+<li>Listen requests</li>
+<li>Parse requests with correct protocol</li>
+<li>Map requests to the correct container</li>
+<li>response to client</li>
+</ul>
+<p>Tomcat supports HTTP and AJP. It supports mutliple I/O as well, include BIO, NIO, APR, NIO2 and HTTP/2 protocol. </p>
+<img src="/2019/07/16/Tomcat-Architecture/connector.png" class="" title="connector">
+
+<p>Http11NioProtocol represent NIO and http protocol handler. Endpoint represents different I/O. Processor represents different protocols.</p>
+<p>Endpoint accepts request and asks Processor to process the requests. Processor then map the request to the correct container.</p>
+<p>Tomcat uses Mapper and MapperListener tow classes. </p>
+<h3 id="Executor"><a href="#Executor" class="headerlink" title="Executor"></a>Executor</h3><p>Executor is used to maintain a thread pool.</p>
+<h3 id="Bootstrap-and-Catalina"><a href="#Bootstrap-and-Catalina" class="headerlink" title="Bootstrap and Catalina"></a>Bootstrap and Catalina</h3><p>Catalina class provides a shell program. This program parse the server.xml file and start, stop application server.</p>
+<p>Bootstrap is the entrance to the application server. It creates Catalina instances.</p>
+<img src="/2019/07/16/Tomcat-Architecture/start.png" class="" title="start">
+
+<h2 id="Class-loader"><a href="#Class-loader" class="headerlink" title="Class loader"></a>Class loader</h2><h3 id="J2SE-class-loader"><a href="#J2SE-class-loader" class="headerlink" title="J2SE class loader"></a>J2SE class loader</h3><p>We all knows that JVM provides three class laoders. Bootstrap class loader -&gt; Extension class loader -&gt; System class loader.</p>
+<ul>
+<li>Bootstrap: load JAVA_HOME/jre/lib</li>
+<li>Extension: load JAVA_HOME/jre/lib/ext</li>
+<li>System: load CLASSPATH or -classpath</li>
+</ul>
+<h3 id="Tomcat-class-loader"><a href="#Tomcat-class-loader" class="headerlink" title="Tomcat class loader"></a>Tomcat class loader</h3><p>Servlet standard requires that each web application has a independent class laoder instance.</p>
+<ul>
+<li>Isolation: If different web apps use different class loader, it avoids interference between dependencies.</li>
+<li>Flexibility: We can restart one web app without affecting another web app.</li>
+<li>Performance: One web app doesn’t need to scan other dependencies.</li>
+</ul>
+<img src="/2019/07/16/Tomcat-Architecture/class-loader.png" class="" title="class loader">
+
+<ul>
+<li>Common: path common.loader -&gt; CATALINA_HOME/lib. <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ClassLoader commonLoader &#x3D; null;</span><br><span class="line">commonLoader &#x3D; createClassLoader(&quot;common&quot;, null);</span><br></pre></td></tr></table></figure></li>
+<li>Catalina: path server.loader</li>
+<li>Shared: path shared.loader</li>
+<li>Web app: load /WEB-INF/classes and /WEB-INF/lib</li>
+</ul>
+<h1 id="Catalina-1"><a href="#Catalina-1" class="headerlink" title="Catalina"></a>Catalina</h1><h2 id="What-is-Catalina"><a href="#What-is-Catalina" class="headerlink" title="What is Catalina"></a>What is Catalina</h2><p>Catalina includes all components mentioned earlier. It is the core of Tomcat. </p>
+<h2 id="Digester"><a href="#Digester" class="headerlink" title="Digester"></a>Digester</h2><p>Catalina uses Digester to parse XML (server.xml)</p>
+<h2 id="Create-Server"><a href="#Create-Server" class="headerlink" title="Create Server"></a>Create Server</h2><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=<span class="string">&#x27;1.0&#x27;</span> encoding=<span class="string">&#x27;utf-8&#x27;</span>?&gt;</span><br><span class="line">&lt;Server port=<span class="string">&quot;8005&quot;</span> shutdown=<span class="string">&quot;SHUTDOWN&quot;</span>&gt;</span><br><span class="line"></span><br><span class="line">  &lt;Listener className=<span class="string">&quot;org.apache.catalina.core.AprLifecycleListener&quot;</span> SSLEngine=<span class="string">&quot;on&quot;</span> /&gt;</span><br><span class="line">  &lt;Listener className=<span class="string">&quot;org.apache.catalina.core.JasperListener&quot;</span> /&gt;</span><br><span class="line">  &lt;Listener className=<span class="string">&quot;org.apache.catalina.mbeans.ServerLifecycleListener&quot;</span> /&gt;</span><br><span class="line">  &lt;Listener className=<span class="string">&quot;org.apache.catalina.mbeans.GlobalResourcesLifecycleListener&quot;</span> /&gt;</span><br><span class="line"></span><br><span class="line">  &lt;Listener className=<span class="string">&quot;com.springsource.server.web.tomcat.ServerLifecycleLoggingListener&quot;</span>/&gt;</span><br><span class="line"></span><br><span class="line">  &lt;Service name=<span class="string">&quot;Catalina&quot;</span>&gt;</span><br><span class="line">    &lt;Connector port=<span class="string">&quot;8080&quot;</span> protocol=<span class="string">&quot;HTTP/1.1&quot;</span></span><br><span class="line">               connectionTimeout=<span class="string">&quot;20000&quot;</span></span><br><span class="line">           redirectPort=<span class="string">&quot;8443&quot;</span> /&gt;</span><br><span class="line"></span><br><span class="line">    &lt;Connector port=<span class="string">&quot;8443&quot;</span> protocol=<span class="string">&quot;HTTP/1.1&quot;</span> SSLEnabled=<span class="string">&quot;true&quot;</span></span><br><span class="line">           maxThreads=<span class="string">&quot;150&quot;</span> scheme=<span class="string">&quot;https&quot;</span> secure=<span class="string">&quot;true&quot;</span></span><br><span class="line">           clientAuth=<span class="string">&quot;false&quot;</span> sslProtocol=<span class="string">&quot;TLS&quot;</span></span><br><span class="line">           keystoreFile=<span class="string">&quot;config/keystore&quot;</span></span><br><span class="line">           keystorePass=<span class="string">&quot;changeit&quot;</span>/&gt;</span><br><span class="line"></span><br><span class="line">    &lt;Connector port=<span class="string">&quot;8009&quot;</span> protocol=<span class="string">&quot;AJP/1.3&quot;</span> redirectPort=<span class="string">&quot;8443&quot;</span> /&gt;</span><br><span class="line"></span><br><span class="line">    &lt;Engine name=<span class="string">&quot;Catalina&quot;</span> defaultHost=<span class="string">&quot;localhost&quot;</span>&gt;</span><br><span class="line"></span><br><span class="line">      &lt;Realm className=<span class="string">&quot;org.apache.catalina.realm.JAASRealm&quot;</span> appName=<span class="string">&quot;dm-kernel&quot;</span></span><br><span class="line">         userClassNames=<span class="string">&quot;com.springsource.kernel.authentication.User&quot;</span></span><br><span class="line">         roleClassNames=<span class="string">&quot;com.springsource.kernel.authentication.Role&quot;</span>/&gt;</span><br><span class="line"></span><br><span class="line">      &lt;Host name=<span class="string">&quot;localhost&quot;</span>  appBase=<span class="string">&quot;webapps&quot;</span></span><br><span class="line">        unpackWARs=<span class="string">&quot;true&quot;</span> autoDeploy=<span class="string">&quot;true&quot;</span></span><br><span class="line">        xmlValidation=<span class="string">&quot;false&quot;</span> xmlNamespaceAware=<span class="string">&quot;false&quot;</span>&gt;</span><br><span class="line"></span><br><span class="line">        &lt;Valve className=<span class="string">&quot;org.apache.catalina.valves.AccessLogValve&quot;</span> </span><br><span class="line">               directory=<span class="string">&quot;serviceability/logs/access&quot;</span></span><br><span class="line">           prefix=<span class="string">&quot;localhost_access_log.&quot;</span> suffix=<span class="string">&quot;.txt&quot;</span> pattern=<span class="string">&quot;common&quot;</span> </span><br><span class="line">               resolveHosts=<span class="string">&quot;false&quot;</span>/&gt;</span><br><span class="line">                    </span><br><span class="line">        &lt;Valve className=<span class="string">&quot;com.springsource.server.web.tomcat.ApplicationNameTrackingValve&quot;</span>/&gt;</span><br><span class="line">      &lt;/Host&gt;</span><br><span class="line">    &lt;/Engine&gt;</span><br><span class="line">  &lt;/Service&gt;</span><br><span class="line">&lt;/Server&gt;</span><br></pre></td></tr></table></figure>
+
+<img src="/2019/07/16/Tomcat-Architecture/catalina.png" class="" title="catalina">
+
+<p>A Engine is the highest-level of a container. It can contains one or more Hosts. You could configure a Tomcat server to run on several hostnames, known as virtual host. The Catalina Engine receives HTTP requests from the HTTP connector, and direct them to the correct host based on the hostname/IP address in the request header.</p>
+<p>A Realm is a database of user, password, and role for authentication (i.e., access control). You can define Realm for any container, such as Engine, Host, and Context, and Cluster. It uses the JNDI name UserDatabase defined in the GlobalNamingResources. Besides the UserDatabaseRealm, there are: JDBCRealm (for authenticating users to connect to a relational database via the JDBC driver); DataSourceRealm (to connect to a DataSource via JNDI; JNDIRealm (to connect to an LDAP directory); and MemoryRealm (to load an XML file in memory).</p>
+<p>A Host defines a virtual host under the Engine, which can in turn support many Contexts (webapps).</p>
+<p>Tomcat supports server clustering. It can replicate sessions and context attributes across the clustered server. It can also deploy a WAR-file on all the cluster.</p>
+<p>A Valve can intercept HTTP requests before forwarding them to the applications, for pre-processing the requests. A Valve can be defined for any container, such as Engine, Host, and Context, and Cluster. In the default configuration, the AccessLogValve intercepts an HTTP request and creates a log entry in the log file.</p>
+<h2 id="Deploy-Web"><a href="#Deploy-Web" class="headerlink" title="Deploy Web"></a>Deploy Web</h2><p>Catalina mainly uses StandardHost, HostConfig, StandardContext, ContextConfig, StandardWrapper to deploy webapp.</p>
+<h2 id="Hendle-Web-Requests"><a href="#Hendle-Web-Requests" class="headerlink" title="Hendle Web Requests"></a>Hendle Web Requests</h2><p>As we mentioned, Tomcat use org.apache.tomcat.util.http.mapper.Mapper matain the association between Connector and Container (Host, Context, Wrapper). And org.apache.catalina.connector.MapperListener listens on events for container and dynamically register or remove corresponding association.</p>
+<p>When connector receives a request, it reads request and invoke CoyoteAdapter.service() method.</p>
+<h1 id="Coyote"><a href="#Coyote" class="headerlink" title="Coyote"></a>Coyote</h1><p>Coyote is the name of Tomcat Connector framework. It encapsulates underlying network communication(Socket). Coyote converts Socket input into Request object and gives it to Catalina container and converts response into socket output.</p>
+<p>Coyote is an independent module. It has no relationship with Servlet standard. Thus, its Request and Response objects don’t implement Servlet standard.</p>
+<p>Coyote supports the following three protocols in application layer:</p>
+<ul>
+<li>HTTP/1.1</li>
+<li>AJP</li>
+<li>HTTP/2.0</li>
+</ul>
+<p>Also, it supports the following I/O in terms of transport layer.</p>
+<ul>
+<li>NIO</li>
+<li>NIO2</li>
+<li>APR</li>
+</ul>
+<h2 id="Key-concepts"><a href="#Key-concepts" class="headerlink" title="Key concepts"></a>Key concepts</h2><ul>
+<li>Endpoint</li>
+</ul>
+<p>Encapsulates Socket. Tomcat provides AbstractEndpoint and provide NioEndpoint, AprEndpoint and Nio2Endpoint three implementation.</p>
+<ul>
+<li>Processor</li>
+</ul>
+<p>Construct Request and Response object and pass them to Catalina container through Adapter. Http11Processor, AjpProcessor, Stream Preocessor.</p>
+<ul>
+<li>ProtocolHandler</li>
+</ul>
+<p>Encapsulate Endpoint and Processor. Http11NioProtocol, Http11Nio2Protocol, etc.</p>
+<ul>
+<li>UpgradeProtocol</li>
+</ul>
+<h2 id="Simplified-flow"><a href="#Simplified-flow" class="headerlink" title="Simplified flow"></a>Simplified flow</h2><p>Endpoint -&gt; Endpoint.Acceptor -&gt; SocketProcessorBase -&gt; Endpoint.Handler process(SocketWrapper) -&gt; Processor -&gt; Adapter service(request, response) -&gt; Valve</p>
+<p>Connector starts Endpoint instances. Endpoint run multiple threads and each thread runs an AbstractEndpoint.Acceptor instance. Acceptr converts Socket to SocketWrapper instance and handles it to SocketProcessor. </p>
+<h1 id="Cluster"><a href="#Cluster" class="headerlink" title="Cluster"></a>Cluster</h1><img src="/2019/07/16/Tomcat-Architecture/cluster.png" class="" title="Cluster">
+
+
+<p>First, org.apache.catalina.Cluster is responsible for setting up a way to communicate within the Cluster.</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Java/" rel="tag"># Java</a>
+              <a href="/tags/Web/" rel="tag"># Web</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/07/16/Java-Socket/" rel="prev" title="Java Socket">
+      <i class="fa fa-chevron-left"></i> Java Socket
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/07/19/Spring-Framework/" rel="next" title="Spring Framework">
+      Spring Framework <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-A-heigh-level-Architecture"><span class="nav-number">1.</span> <span class="nav-text">1. A heigh-level Architecture</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Componets"><span class="nav-number">1.1.</span> <span class="nav-text">Componets</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Connector-and-Container"><span class="nav-number">1.1.1.</span> <span class="nav-text">Connector and Container</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Container-design"><span class="nav-number">1.1.2.</span> <span class="nav-text">Container design</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Init-Flow"><span class="nav-number">1.1.3.</span> <span class="nav-text">Init Flow</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Bootstrap"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">Bootstrap</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Catalina"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">Catalina</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#init-start-method"><span class="nav-number">1.1.3.3.</span> <span class="nav-text">init&#x2F;start method</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Lifecycle"><span class="nav-number">1.1.3.4.</span> <span class="nav-text">Lifecycle</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#StandardServer-await-and-stopServer"><span class="nav-number">1.1.3.5.</span> <span class="nav-text">StandardServer.await() and stopServer()</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Request-flow"><span class="nav-number">1.1.4.</span> <span class="nav-text">Request flow</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Convert-socket-to-internal-request-object"><span class="nav-number">1.1.4.1.</span> <span class="nav-text">Convert socket to internal request object</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Request-object-from-connector-to-Engine-Host-Context-Wrapper"><span class="nav-number">1.1.4.2.</span> <span class="nav-text">Request object from connector to Engine, Host, Context, Wrapper</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Pipeline-and-Valve"><span class="nav-number">1.1.5.</span> <span class="nav-text">Pipeline and Valve</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Web-deployment"><span class="nav-number">1.1.6.</span> <span class="nav-text">Web deployment</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Connector-design"><span class="nav-number">1.1.7.</span> <span class="nav-text">Connector design</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Executor"><span class="nav-number">1.1.8.</span> <span class="nav-text">Executor</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Bootstrap-and-Catalina"><span class="nav-number">1.1.9.</span> <span class="nav-text">Bootstrap and Catalina</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Class-loader"><span class="nav-number">1.2.</span> <span class="nav-text">Class loader</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#J2SE-class-loader"><span class="nav-number">1.2.1.</span> <span class="nav-text">J2SE class loader</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Tomcat-class-loader"><span class="nav-number">1.2.2.</span> <span class="nav-text">Tomcat class loader</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Catalina-1"><span class="nav-number">2.</span> <span class="nav-text">Catalina</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#What-is-Catalina"><span class="nav-number">2.1.</span> <span class="nav-text">What is Catalina</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Digester"><span class="nav-number">2.2.</span> <span class="nav-text">Digester</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Create-Server"><span class="nav-number">2.3.</span> <span class="nav-text">Create Server</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Deploy-Web"><span class="nav-number">2.4.</span> <span class="nav-text">Deploy Web</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hendle-Web-Requests"><span class="nav-number">2.5.</span> <span class="nav-text">Hendle Web Requests</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Coyote"><span class="nav-number">3.</span> <span class="nav-text">Coyote</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Key-concepts"><span class="nav-number">3.1.</span> <span class="nav-text">Key concepts</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Simplified-flow"><span class="nav-number">3.2.</span> <span class="nav-text">Simplified flow</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Cluster"><span class="nav-number">4.</span> <span class="nav-text">Cluster</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Dafei Wang"
+      src="/images/avatar-png.png">
+  <p class="site-author-name" itemprop="name">Dafei Wang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dafei Wang</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+    </div>
+</body>
+</html>

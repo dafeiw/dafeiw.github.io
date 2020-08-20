@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Montserrat:300,300italic,400,400italic,700,700italic|Apercu Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"dafeiwang.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Gradle BasicsProjects and tasks are two fundamental concepts Every gradle build is made up of one or more projects. A project represents either a thing to be built or a thing to be done. Each project">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Gradle note">
+<meta property="og:url" content="https://dafeiwang.com/2019/10/19/Gradle-note/index.html">
+<meta property="og:site_name" content="Dafei&#39;s Blog">
+<meta property="og:description" content="Gradle BasicsProjects and tasks are two fundamental concepts Every gradle build is made up of one or more projects. A project represents either a thing to be built or a thing to be done. Each project">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-10-19T17:34:07.000Z">
+<meta property="article:modified_time" content="2019-12-11T01:45:24.758Z">
+<meta property="article:author" content="Dafei Wang">
+<meta property="article:tag" content="build">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://dafeiwang.com/2019/10/19/Gradle-note/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Gradle note | Dafei's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Dafei's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://dafeiwang.com/2019/10/19/Gradle-note/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar-png.png">
+      <meta itemprop="name" content="Dafei Wang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dafei's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Gradle note
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-10-19 18:34:07" itemprop="dateCreated datePublished" datetime="2019-10-19T18:34:07+01:00">2019-10-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-12-11 01:45:24" itemprop="dateModified" datetime="2019-12-11T01:45:24Z">2019-12-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Build/" itemprop="url" rel="index"><span itemprop="name">Build</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Gradle-Basics"><a href="#Gradle-Basics" class="headerlink" title="Gradle Basics"></a>Gradle Basics</h1><p>Projects and tasks are two fundamental concepts</p>
+<p>Every gradle build is made up of one or more projects. A project represents either a thing to be built or a thing to be done.</p>
+<p>Each project is made up of one or more tasks. A task represents some atomic piece of work to be performed. </p>
+<a id="more"></a>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">task hello &#123;</span><br><span class="line">    doLast &#123;</span><br><span class="line">        println <span class="string">&#x27;Hello world!&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">task intro(<span class="attr">dependsOn:</span> hello) &#123;</span><br><span class="line">    doLast &#123;</span><br><span class="line">        println <span class="string">&quot;I&#x27;m Gradle&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// via API (Each task is available as a property of the build script)</span></span><br><span class="line">intro.dependsOn hello</span><br><span class="line"></span><br><span class="line">intro.doLast &#123;</span><br><span class="line">    println <span class="string">&#x27;Second doLast&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// dynamically create tasks</span></span><br><span class="line"><span class="number">4.</span>times &#123; counter -&gt;</span><br><span class="line">    task <span class="string">&quot;task$counter&quot;</span>  &#123;</span><br><span class="line">        doLast &#123;</span><br><span class="line">            println <span class="string">&quot;I&#x27;m task number $counter&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// add extra property (project, task, source set can hold extra property)</span></span><br><span class="line">task myTask &#123;</span><br><span class="line">    ext.myProperty = <span class="string">&#x27;myValue&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">task printTaskProperties &#123;</span><br><span class="line">    doLast &#123;</span><br><span class="line">        println myTask.myProperty</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h1 id="Working-with-Tasks"><a href="#Working-with-Tasks" class="headerlink" title="Working with Tasks"></a>Working with Tasks</h1><h2 id="Define-tasks"><a href="#Define-tasks" class="headerlink" title="Define tasks"></a>Define tasks</h2><p>Defining tasks using strings for task names</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">task(<span class="string">&#x27;hello&#x27;</span>) &#123;</span><br><span class="line">    doLast &#123;</span><br><span class="line">        println <span class="string">&quot;hello&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">task(<span class="string">&#x27;copy&#x27;</span>, <span class="attr">type:</span> Copy) &#123;</span><br><span class="line">    from(file(<span class="string">&#x27;srcDir&#x27;</span>))</span><br><span class="line">    into(buildDir)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Defining tasks using the tasks container</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">tasks.create(<span class="string">&#x27;hello&#x27;</span>) &#123;</span><br><span class="line">    doLast &#123;</span><br><span class="line">        println <span class="string">&quot;hello&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">tasks.create(<span class="string">&#x27;copy&#x27;</span>, Copy) &#123;</span><br><span class="line">    from(file(<span class="string">&#x27;srcDir&#x27;</span>))</span><br><span class="line">    into(buildDir)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Defining tasks using a DSL specific syntax</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">task(hello) &#123;</span><br><span class="line">    doLast &#123;</span><br><span class="line">        println <span class="string">&quot;hello&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">task(copy, <span class="attr">type:</span> Copy) &#123;</span><br><span class="line">    from(file(<span class="string">&#x27;srcDir&#x27;</span>))</span><br><span class="line">    into(buildDir)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Locating-Tasks"><a href="#Locating-Tasks" class="headerlink" title="Locating Tasks"></a>Locating Tasks</h2><p>Accessing tasks using a DSL specific syntax:</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">task hello</span><br><span class="line">task copy(<span class="attr">type:</span> Copy)</span><br><span class="line"></span><br><span class="line"><span class="comment">// Access tasks using Groovy dynamic properties on Project</span></span><br><span class="line"></span><br><span class="line">println hello.name</span><br><span class="line">println project.hello.name</span><br><span class="line"></span><br><span class="line">println copy.destinationDir</span><br><span class="line">println project.copy.destinationDir</span><br></pre></td></tr></table></figure>
+
+<p>Accessing tasks via tasks collection:</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">task hello</span><br><span class="line">task copy(<span class="attr">type:</span> Copy)</span><br><span class="line"></span><br><span class="line">println tasks.hello.name</span><br><span class="line">println tasks.named(<span class="string">&#x27;hello&#x27;</span>).get().name</span><br><span class="line"></span><br><span class="line">println tasks.copy.destinationDir</span><br><span class="line">println tasks.named(<span class="string">&#x27;copy&#x27;</span>).get().destinationDir</span><br></pre></td></tr></table></figure>
+
+<p>Accessing tasks by path:</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">project(<span class="string">&#x27;:projectA&#x27;</span>) &#123;</span><br><span class="line">    task hello</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">task hello</span><br><span class="line"></span><br><span class="line">println tasks.getByPath(<span class="string">&#x27;hello&#x27;</span>).path</span><br><span class="line">println tasks.getByPath(<span class="string">&#x27;:hello&#x27;</span>).path</span><br><span class="line">println tasks.getByPath(<span class="string">&#x27;projectA:hello&#x27;</span>).path</span><br><span class="line">println tasks.getByPath(<span class="string">&#x27;:projectA:hello&#x27;</span>).path</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="Configure-tasks"><a href="#Configure-tasks" class="headerlink" title="Configure tasks"></a>Configure tasks</h2><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">task myCopy(<span class="attr">type:</span> Copy)</span><br></pre></td></tr></table></figure>
+<p>The name of this task is “myCopy”, but it is of type “Copy”. You can have multiple tasks of the same type, but with different names.</p>
+<p>Configuring a task using the API:</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Copy myCopy = tasks.getByName(<span class="string">&quot;myCopy&quot;</span>)</span><br><span class="line">myCopy.from <span class="string">&#x27;resources&#x27;</span></span><br><span class="line">myCopy.into <span class="string">&#x27;target&#x27;</span></span><br><span class="line">myCopy.include(<span class="string">&#x27;**/*.txt&#x27;</span>, <span class="string">&#x27;**/*.xml&#x27;</span>, <span class="string">&#x27;**/*.properties&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>Configuring a task using a DSL specific syntax:</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">myCopy &#123;</span><br><span class="line">   from <span class="string">&#x27;resources&#x27;</span></span><br><span class="line">   into <span class="string">&#x27;target&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line">myCopy.include(<span class="string">&#x27;**/*.txt&#x27;</span>, <span class="string">&#x27;**/*.xml&#x27;</span>, <span class="string">&#x27;**/*.properties&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>You can also use a configuration block when you define a task. Defining a task with a configuration block:</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">task copy(<span class="attr">type:</span> Copy) &#123;</span><br><span class="line">   from <span class="string">&#x27;resources&#x27;</span></span><br><span class="line">   into <span class="string">&#x27;target&#x27;</span></span><br><span class="line">   include(<span class="string">&#x27;**/*.txt&#x27;</span>, <span class="string">&#x27;**/*.xml&#x27;</span>, <span class="string">&#x27;**/*.properties&#x27;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Passing-argumetns-to-a-task-constructor"><a href="#Passing-argumetns-to-a-task-constructor" class="headerlink" title="Passing argumetns to a task constructor"></a>Passing argumetns to a task constructor</h2><p>Prefer creating a task with constructor arguments using the TaskContainer</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CustomTask</span> <span class="keyword">extends</span> <span class="title">DefaultTask</span> &#123;</span></span><br><span class="line">    <span class="keyword">final</span> String message</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> number</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Inject</span></span><br><span class="line">    CustomTask(String message, <span class="keyword">int</span> number) &#123;</span><br><span class="line">        <span class="built_in">this</span>.message = message</span><br><span class="line">        <span class="built_in">this</span>.number = number</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">tasks.create(<span class="string">&#x27;myTask&#x27;</span>, CustomTask, <span class="string">&#x27;hello&#x27;</span>, <span class="number">42</span>)</span><br><span class="line"></span><br><span class="line">task myTask(<span class="attr">type:</span> CustomTask, <span class="attr">constructorArgs:</span> [<span class="string">&#x27;hello&#x27;</span>, <span class="number">42</span>])</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="Skipping-tasks"><a href="#Skipping-tasks" class="headerlink" title="Skipping tasks"></a>Skipping tasks</h2><p>Use a predicate</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hello.onlyIf &#123; !project.hasProperty(<span class="string">&#x27;skipHello&#x27;</span>) &#125;</span><br></pre></td></tr></table></figure>
+<p>Skipping tasks with StopExecutionException</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">compile.doFirst &#123;</span><br><span class="line">    <span class="comment">// Here you would put arbitrary conditions in real life.</span></span><br><span class="line">    <span class="comment">// But this is used in an integration test so we want defined behavior.</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="literal">true</span>) &#123; <span class="keyword">throw</span> <span class="keyword">new</span> StopExecutionException() &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Enabling and disabling tasks</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">task disableMe &#123;</span><br><span class="line">    doLast &#123;</span><br><span class="line">        println <span class="string">&#x27;This should not be printed if the task is disabled.&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">disableMe.enabled = <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+
+<p>Use timeout property. When a task reaches its timeout, its task execution thread is interrupted.</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">task hangingTask() &#123;</span><br><span class="line">    doLast &#123;</span><br><span class="line">        Thread.sleep(<span class="number">100000</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    timeout = Duration.ofMillis(<span class="number">500</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Incremental-Build"><a href="#Incremental-Build" class="headerlink" title="Incremental Build"></a>Incremental Build</h2><p>Incremental build won’t work unless a task has at least one task output, although tasks usually have at least one input as well.</p>
+<p>As a build author, you need to specify which are inputs and which are outputs. Also be careful of non-deterministic tasks that may generate different output for exactly the same inputs.</p>
+<h2 id="External-dependencies-for-the-build-script"><a href="#External-dependencies-for-the-build-script" class="headerlink" title="External dependencies for the build script"></a>External dependencies for the build script</h2><p>If your build script needs to use external libraries, you can add them to the script’s classpath in the build script itself. You do this using the buildscript() method. The block passed to the buildscript() method configures a ScriptHandler instance</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">buildscript &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        mavenCentral()</span><br><span class="line">    &#125;</span><br><span class="line">    dependencies &#123;</span><br><span class="line">        classpath <span class="attr">group:</span> <span class="string">&#x27;commons-codec&#x27;</span>, <span class="attr">name:</span> <span class="string">&#x27;commons-codec&#x27;</span>, <span class="attr">version:</span> <span class="string">&#x27;1.2&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="The-script-API"><a href="#The-script-API" class="headerlink" title="The script API"></a>The script API</h2><p>When Gradle executes a Groovy build script (.gradle), it compiles the script into a class which implements Script. This means that all of the properties and methods declared by the Script interface are available in your script.</p>
+<h1 id="Working-with-Plugin"><a href="#Working-with-Plugin" class="headerlink" title="Working with Plugin"></a>Working with Plugin</h1><p>Two types of plugins</p>
+<ul>
+<li>script plugin</li>
+<li>binary plugin (classes that implement the Plugin interface)</li>
+</ul>
+<p>A plugin often starts out as a script plugin (because they are easy to write) and then, as the code becomes more valuable, it’s migrated to a binary plugin that can be easily tested and shared betwen multiple projects or organizations.</p>
+<p>To use a plugin has two steps (resolving and applying). Applying a plugin means actually executing the plugin’s Plugin.apply(T) on the Project you want to enhance with the plugin.</p>
+<h2 id="Script-Plugins"><a href="#Script-Plugins" class="headerlink" title="Script Plugins"></a>Script Plugins</h2><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apply <span class="attr">from:</span> <span class="string">&#x27;other.gradle&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Binary-Plugins"><a href="#Binary-Plugins" class="headerlink" title="Binary Plugins"></a>Binary Plugins</h2><p>A plugin is simply any class that implements the Plugin interface. Non-core binary plugins need to be resolved before they can be applied. </p>
+<ul>
+<li>Including the plugin from the plugin portal or a custom repository using the plugins DSL</li>
+<li>Including the plugin from an external jar defined as a buildscript dependency</li>
+<li>Defining the plugin as a source file under the buildSrc directory in the project</li>
+<li>Defining the plugin as an inline class declaration inside a build script.</li>
+</ul>
+<h2 id="Applying-plugins"><a href="#Applying-plugins" class="headerlink" title="Applying plugins"></a>Applying plugins</h2><p>The plugins DSL block configures an instance of PluginDependenciesSpec.</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">plugins &#123;</span><br><span class="line">    id <span class="string">&#x27;java&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">plugins &#123;</span><br><span class="line">    id <span class="string">&#x27;com.jfrog.bintray&#x27;</span> version <span class="string">&#x27;0.4.1&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">apply <span class="attr">from:</span> rootProject.file(<span class="string">&#x27;gradle/dependencies.gradle&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="Applying-plugins-to-subprojects"><a href="#Applying-plugins-to-subprojects" class="headerlink" title="Applying plugins to subprojects"></a>Applying plugins to subprojects</h2><p>The default behaviour of the plugins{} block is to immediately <code>resolve</code> and <code>apply</code> the plugins. </p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">plugins &#123;</span><br><span class="line">    id <span class="string">&#x27;org.gradle.sample.hello&#x27;</span> version <span class="string">&#x27;1.0.0&#x27;</span> apply <span class="literal">false</span></span><br><span class="line">    id <span class="string">&#x27;org.gradle.sample.goodbye&#x27;</span> version <span class="string">&#x27;1.0.0&#x27;</span> apply <span class="literal">false</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">subprojects &#123;</span><br><span class="line">    <span class="keyword">if</span> (name.startsWith(<span class="string">&#x27;hello&#x27;</span>)) &#123;</span><br><span class="line">        apply <span class="attr">plugin:</span> <span class="string">&#x27;org.gradle.sample.hello&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Write-a-simple-plugin"><a href="#Write-a-simple-plugin" class="headerlink" title="Write a simple plugin"></a>Write a simple plugin</h2><p>There are several places where you can put the source for the plugin.</p>
+<ul>
+<li>Build script</li>
+<li><code>buildSrc</code> project</li>
+<li>Standalone project</li>
+</ul>
+<p>To create a Gradle plugin, you need to write a class that implements the Plugin interface. When the plugin is applied to a project, Gradle creates an instance of the plugin class and calls the instance’s Plugin.apply() method. The project object is passed as a parameter, which the plugin can use to configure the project however it needs to. </p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GreetingPlugin</span> <span class="keyword">implements</span> <span class="title">Plugin</span>&lt;<span class="title">Project</span>&gt; &#123;</span></span><br><span class="line">    <span class="keyword">void</span> apply(Project project) &#123;</span><br><span class="line">        project.task(<span class="string">&#x27;hello&#x27;</span>) &#123;</span><br><span class="line">            doLast &#123;</span><br><span class="line">                println <span class="string">&#x27;Hello from the GreetingPlugin&#x27;</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Apply the plugin</span></span><br><span class="line">apply <span class="attr">plugin:</span> GreetingPlugin</span><br></pre></td></tr></table></figure>
+
+<h2 id="Make-the-plugin-confiugration"><a href="#Make-the-plugin-confiugration" class="headerlink" title="Make the plugin confiugration"></a>Make the plugin confiugration</h2><p>To make the plugin configurable, you need add an extension object (represents the configuration) to the ExtensionContainer.</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GreetingPluginExtension</span> &#123;</span></span><br><span class="line">    String message</span><br><span class="line">    String greeter</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GreetingPlugin</span> <span class="keyword">implements</span> <span class="title">Plugin</span>&lt;<span class="title">Project</span>&gt; &#123;</span></span><br><span class="line">    <span class="keyword">void</span> apply(Project project) &#123;</span><br><span class="line">        <span class="keyword">def</span> extension = project.extensions.create(<span class="string">&#x27;greeting&#x27;</span>, GreetingPluginExtension)</span><br><span class="line">        project.task(<span class="string">&#x27;hello&#x27;</span>) &#123;</span><br><span class="line">            doLast &#123;</span><br><span class="line">                println <span class="string">&quot;$&#123;extension.message&#125; from $&#123;extension.greeter&#125;&quot;</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">apply <span class="attr">plugin:</span> GreetingPlugin</span><br><span class="line"></span><br><span class="line"><span class="comment">// Configure the extension using a DSL block</span></span><br><span class="line">greeting &#123;</span><br><span class="line">    message = <span class="string">&#x27;Hi&#x27;</span></span><br><span class="line">    greeter = <span class="string">&#x27;Gradle&#x27;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="Building-Java-project"><a href="#Building-Java-project" class="headerlink" title="Building Java project"></a>Building Java project</h1><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">plugins &#123;</span><br><span class="line">    id <span class="string">&#x27;java&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">sourceCompatibility = <span class="string">&#x27;1.8&#x27;</span></span><br><span class="line">targetCompatibility = <span class="string">&#x27;1.8&#x27;</span></span><br><span class="line">version = <span class="string">&#x27;1.2.1&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apply <span class="attr">plugin:</span> <span class="string">&#x27;java&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">project  </span><br><span class="line">    +build  </span><br><span class="line">    +src&#x2F;main&#x2F;java  </span><br><span class="line">    +src&#x2F;main&#x2F;resources  </span><br><span class="line">    +src&#x2F;test&#x2F;java  </span><br><span class="line">    +src&#x2F;test&#x2F;resources  </span><br></pre></td></tr></table></figure>
+
+<p>java plugin adds some tasks. <code>gradle tasks</code></p>
+<p>By applying the Java plugin, you get a whole host of features: compileJava, compileTestJava, test, jar, javadoc</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">task show  &#123;</span><br><span class="line">    doLast&#123;</span><br><span class="line">        println relativePath(compileJava.destinationDir)</span><br><span class="line">        println relativePath(processResources.destinationDir)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
+
+<p>You can change the destinationDir of compireJava.</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">apply <span class="attr">plugin:</span> <span class="string">&#x27;java&#x27;</span></span><br><span class="line">compileJava.destinationDir = file(<span class="string">&quot;$buildDir/output/classes&quot;</span>)</span><br><span class="line">task show  &#123;</span><br><span class="line">    doLast&#123;</span><br><span class="line">        println relativePath(compileJava.destinationDir)</span><br><span class="line">        println relativePath(processResources.destinationDir)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
+
+<p>But compileJava is not the only task that needs to know destinationDir. Gradle has sourceSet</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">apply <span class="attr">plugin:</span> <span class="string">&#x27;java&#x27;</span></span><br><span class="line">sourceSets.main.output.classesDir = file(<span class="string">&quot;$buildDir/output/classes&quot;</span>)</span><br><span class="line">task show &lt;&lt; &#123;</span><br><span class="line">    println relativePath(compileJava.destinationDir)</span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
+
+<h2 id="Source-Set"><a href="#Source-Set" class="headerlink" title="Source Set"></a>Source Set</h2><p>java plugin defines main source set and test source set. </p>
+<p>Custom source dir</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">sourceSets &#123;</span><br><span class="line">    main &#123;</span><br><span class="line">         java &#123;</span><br><span class="line">            srcDirs = [<span class="string">&#x27;src&#x27;</span>]</span><br><span class="line">         &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    test &#123;</span><br><span class="line">        java &#123;</span><br><span class="line">            srcDirs = [<span class="string">&#x27;test&#x27;</span>]</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Changing-compiler-options"><a href="#Changing-compiler-options" class="headerlink" title="Changing compiler options"></a>Changing compiler options</h2><p>Most of the compiler options are accessible through the corresponding task, such as <code>compileJava</code> and <code>compileTestJava</code>.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">compileJava &#123;</span><br><span class="line">    options.incremental = <span class="keyword">true</span></span><br><span class="line">    options.fork = <span class="keyword">true</span></span><br><span class="line">    options.failOnError = <span class="keyword">false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="Build-Phases"><a href="#Build-Phases" class="headerlink" title="Build Phases"></a>Build Phases</h1><p>Initializaiton -&gt; Configuration -&gt; Execuiton</p>
+<h1 id="Composite-build"><a href="#Composite-build" class="headerlink" title="Composite build"></a>Composite build</h1><p>A composite build is simply a build that includes other builds. In many ways a composite build is similar to a Gradle multi-project build, except that instead of including single projects, complete builds are included</p>
+<p>Two concepts:</p>
+<ul>
+<li>composite build</li>
+<li>included build</li>
+</ul>
+<p>A build that is included in a composite build is referred to, naturally enough, as an “included build”. Included builds do not share any configuration with the composite build, or the other included builds. Each included build is configured and executed in isolation.</p>
+<p>Included builds interact with other builds via dependency substitution. If any build in the composite has a dependency that can be satisfied by the included build, then that dependency will be replaced by a project dependency on the included build.</p>
+<h2 id="Defining-a-separate-composite-build"><a href="#Defining-a-separate-composite-build" class="headerlink" title="Defining a separate composite build"></a>Defining a separate composite build</h2><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">rootProject.name = <span class="string">&#x27;adhoc&#x27;</span></span><br><span class="line"></span><br><span class="line">includeBuild <span class="string">&#x27;../my-app&#x27;</span></span><br><span class="line">includeBuild <span class="string">&#x27;../my-utils&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="Best-Practice"><a href="#Best-Practice" class="headerlink" title="Best Practice"></a>Best Practice</h1><h2 id="Name-your-project"><a href="#Name-your-project" class="headerlink" title="Name your project"></a>Name your project</h2><p>In <code>seetings.gradle</code> file</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">include <span class="string">&#x27;:api&#x27;</span>, <span class="string">&#x27;:impl&#x27;</span>, <span class="string">&#x27;:client&#x27;</span></span><br><span class="line"> </span><br><span class="line"><span class="comment">// Rename the project early in the kinematics (after that the names are read-only) </span></span><br><span class="line">rootProject.name = <span class="string">&#x27;XXX&#x27;</span></span><br><span class="line">project(<span class="string">&#x27;:api&#x27;</span>).= <span class="string">&#x27;XXX&#x27;</span></span><br><span class="line">project(<span class="string">&#x27;:impl&#x27;</span>).= <span class="string">&#x27;XXX&#x27;</span></span><br><span class="line">project(<span class="string">&#x27;:client&#x27;</span>).= <span class="string">&#x27;XXX&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>After renaming a project, all references must be updated to accomodate the new name. For instance, the existing references “project(‘:impl’)” must now be replaced by “project(‘:XXX’)” </p>
+<h2 id="Use-the-wrapper"><a href="#Use-the-wrapper" class="headerlink" title="Use the wrapper"></a>Use the wrapper</h2><p>Run <code>gradle wrapper</code> to generate two files:</p>
+<ul>
+<li><code>gradle/wrapper/gradle-wrapper.jar</code></li>
+<li><code>gradle/wrapper/gradle-wrapper.properties</code></li>
+<li><code>gradlew</code></li>
+<li><code>gradlew.bat</code></li>
+</ul>
+<h2 id="Apply-DRY"><a href="#Apply-DRY" class="headerlink" title="Apply DRY"></a>Apply DRY</h2><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">apply <span class="attr">plugin:</span> <span class="string">&#x27;java&#x27;</span></span><br><span class="line">  </span><br><span class="line"><span class="keyword">def</span> jerseyVersion = <span class="string">&#x27;1.19&#x27;</span></span><br><span class="line">  </span><br><span class="line">dependencies &#123;</span><br><span class="line">    <span class="comment">// Note that we replaced the single quotes by double quotes to let Groovy evaluate the expression &quot;$&#123;jerseyVersion&#125;&quot;</span></span><br><span class="line">    compile <span class="string">&quot;com.sun.jersey:jersey-core:$&#123;jerseyVersion&#125;&quot;</span></span><br><span class="line">    compile <span class="string">&quot;com.sun.jersey:jersey-servlet:$&#123;jerseyVersion&#125;&quot;</span></span><br><span class="line">    compile <span class="string">&quot;com.sun.jersey:jersey-json:$&#123;jerseyVersion&#125;&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Segregate-the-code-from-the-configuration"><a href="#Segregate-the-code-from-the-configuration" class="headerlink" title="Segregate the code from the configuration"></a>Segregate the code from the configuration</h2><p>Ideally, your Gradle scripts should just contain configuration to keep them as simple / readable as possible. When there’s too much code in your scripts, you should consider moving this custom code outside of the Gradle scripts.</p>
+<p>Gradle automatically compiled the “buildSrc” project prior running the main build. </p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/build/" rel="tag"># build</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/08/26/State-Pattern/" rel="prev" title="State Pattern">
+      <i class="fa fa-chevron-left"></i> State Pattern
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/11/27/Generic-in-Scala/" rel="next" title="Generic in Scala">
+      Generic in Scala <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Gradle-Basics"><span class="nav-number">1.</span> <span class="nav-text">Gradle Basics</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Working-with-Tasks"><span class="nav-number">2.</span> <span class="nav-text">Working with Tasks</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Define-tasks"><span class="nav-number">2.1.</span> <span class="nav-text">Define tasks</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Locating-Tasks"><span class="nav-number">2.2.</span> <span class="nav-text">Locating Tasks</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Configure-tasks"><span class="nav-number">2.3.</span> <span class="nav-text">Configure tasks</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Passing-argumetns-to-a-task-constructor"><span class="nav-number">2.4.</span> <span class="nav-text">Passing argumetns to a task constructor</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Skipping-tasks"><span class="nav-number">2.5.</span> <span class="nav-text">Skipping tasks</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Incremental-Build"><span class="nav-number">2.6.</span> <span class="nav-text">Incremental Build</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#External-dependencies-for-the-build-script"><span class="nav-number">2.7.</span> <span class="nav-text">External dependencies for the build script</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#The-script-API"><span class="nav-number">2.8.</span> <span class="nav-text">The script API</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Working-with-Plugin"><span class="nav-number">3.</span> <span class="nav-text">Working with Plugin</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Script-Plugins"><span class="nav-number">3.1.</span> <span class="nav-text">Script Plugins</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Binary-Plugins"><span class="nav-number">3.2.</span> <span class="nav-text">Binary Plugins</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Applying-plugins"><span class="nav-number">3.3.</span> <span class="nav-text">Applying plugins</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Applying-plugins-to-subprojects"><span class="nav-number">3.4.</span> <span class="nav-text">Applying plugins to subprojects</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Write-a-simple-plugin"><span class="nav-number">3.5.</span> <span class="nav-text">Write a simple plugin</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Make-the-plugin-confiugration"><span class="nav-number">3.6.</span> <span class="nav-text">Make the plugin confiugration</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Building-Java-project"><span class="nav-number">4.</span> <span class="nav-text">Building Java project</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Source-Set"><span class="nav-number">4.1.</span> <span class="nav-text">Source Set</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Changing-compiler-options"><span class="nav-number">4.2.</span> <span class="nav-text">Changing compiler options</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Build-Phases"><span class="nav-number">5.</span> <span class="nav-text">Build Phases</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Composite-build"><span class="nav-number">6.</span> <span class="nav-text">Composite build</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Defining-a-separate-composite-build"><span class="nav-number">6.1.</span> <span class="nav-text">Defining a separate composite build</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Best-Practice"><span class="nav-number">7.</span> <span class="nav-text">Best Practice</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Name-your-project"><span class="nav-number">7.1.</span> <span class="nav-text">Name your project</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Use-the-wrapper"><span class="nav-number">7.2.</span> <span class="nav-text">Use the wrapper</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Apply-DRY"><span class="nav-number">7.3.</span> <span class="nav-text">Apply DRY</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Segregate-the-code-from-the-configuration"><span class="nav-number">7.4.</span> <span class="nav-text">Segregate the code from the configuration</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Dafei Wang"
+      src="/images/avatar-png.png">
+  <p class="site-author-name" itemprop="name">Dafei Wang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dafei Wang</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+    </div>
+</body>
+</html>

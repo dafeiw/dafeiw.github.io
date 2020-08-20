@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Montserrat:300,300italic,400,400italic,700,700italic|Apercu Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"dafeiwang.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="HttpClient example12345678910111213141516171819202122232425262728293031323334353637import java.io.IOException;import org.apache.http.HttpEntity;import org.apache.http.HttpHeaders;import org.apache.htt">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Apache HttpClient">
+<meta property="og:url" content="https://dafeiwang.com/2019/12/03/Apache-HttpClient/index.html">
+<meta property="og:site_name" content="Dafei&#39;s Blog">
+<meta property="og:description" content="HttpClient example12345678910111213141516171819202122232425262728293031323334353637import java.io.IOException;import org.apache.http.HttpEntity;import org.apache.http.HttpHeaders;import org.apache.htt">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-12-03T22:35:26.000Z">
+<meta property="article:modified_time" content="2019-12-11T01:43:31.580Z">
+<meta property="article:author" content="Dafei Wang">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://dafeiwang.com/2019/12/03/Apache-HttpClient/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Apache HttpClient | Dafei's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Dafei's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://dafeiwang.com/2019/12/03/Apache-HttpClient/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar-png.png">
+      <meta itemprop="name" content="Dafei Wang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Dafei's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Apache HttpClient
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-12-03 22:35:26" itemprop="dateCreated datePublished" datetime="2019-12-03T22:35:26Z">2019-12-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-12-11 01:43:31" itemprop="dateModified" datetime="2019-12-11T01:43:31Z">2019-12-11</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="HttpClient-example"><a href="#HttpClient-example" class="headerlink" title="HttpClient example"></a>HttpClient example</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.http.HttpEntity;</span><br><span class="line"><span class="keyword">import</span> org.apache.http.HttpHeaders;</span><br><span class="line"><span class="keyword">import</span> org.apache.http.client.methods.CloseableHttpResponse;</span><br><span class="line"><span class="keyword">import</span> org.apache.http.client.methods.HttpGet;</span><br><span class="line"><span class="keyword">import</span> org.apache.http.impl.client.CloseableHttpClient;</span><br><span class="line"><span class="keyword">import</span> org.apache.http.impl.client.HttpClients;</span><br><span class="line"><span class="keyword">import</span> org.apache.http.util.EntityUtils;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HttpClientExample</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line"></span><br><span class="line">        HttpGet request = <span class="keyword">new</span> HttpGet(<span class="string">&quot;https://httpbin.org/get&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// add request headers</span></span><br><span class="line">        request.addHeader(HttpHeaders.USER_AGENT, <span class="string">&quot;Googlebot&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> (CloseableHttpClient httpClient = HttpClients.createDefault();</span><br><span class="line">            CloseableHttpResponse response = httpClient.execute(request)) &#123;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// Get HttpResponse Status</span></span><br><span class="line">            System.out.println(response.getProtocolVersion());              <span class="comment">// HTTP/1.1</span></span><br><span class="line">            System.out.println(response.getStatusLine().getStatusCode());   <span class="comment">// 200</span></span><br><span class="line">            System.out.println(response.getStatusLine().getReasonPhrase()); <span class="comment">// OK</span></span><br><span class="line">            System.out.println(response.getStatusLine().toString());        <span class="comment">// HTTP/1.1 200 OK</span></span><br><span class="line"></span><br><span class="line">            HttpEntity entity = response.getEntity();</span><br><span class="line">            <span class="keyword">if</span> (entity != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="comment">// return it as a String</span></span><br><span class="line">                String result = EntityUtils.toString(entity);</span><br><span class="line">                System.out.println(result);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+
+<h1 id="HttpClient-lt-CloseableHttpClient-lt-MinimalHttpClient"><a href="#HttpClient-lt-CloseableHttpClient-lt-MinimalHttpClient" class="headerlink" title="HttpClient &lt;- CloseableHttpClient &lt;- MinimalHttpClient"></a>HttpClient &lt;- CloseableHttpClient &lt;- MinimalHttpClient</h1><p>MinimalHttpClient contains the following fields:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> HttpClientConnectionManager connManager;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> MinimalClientExec requestExecutor;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> HttpParams params;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>HttpParams params</li>
+<li>MinimalClientExec requestExecutor</li>
+</ul>
+<p>It represents a complete execution process. It’s using decorator pattern.</p>
+<ul>
+<li>HttpClientConnectionManager connManager</li>
+</ul>
+<p>It maintains a connectio pool. Manage lifecycle of connections. </p>
+<p>The status of <code>Connection</code> when created is idle and it’s managed by the connection pool. When the <code>Connection</code> is used, the first step is to check if it’s in <code>open</code> status. If not, it starts connecting. Based on which schema is used (http/https), socket (ssl or plain) is created.</p>
+<p>Let’s take a look at the core method</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> CloseableHttpResponse <span class="title">doExecute</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">final</span> HttpHost target,</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">final</span> HttpRequest request,</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">final</span> HttpContext context)</span> <span class="keyword">throws</span> IOException, ClientProtocolException </span>&#123;</span><br><span class="line">    Args.notNull(target, <span class="string">&quot;Target host&quot;</span>);</span><br><span class="line">    Args.notNull(request, <span class="string">&quot;HTTP request&quot;</span>);</span><br><span class="line">    HttpExecutionAware execAware = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">if</span> (request <span class="keyword">instanceof</span> HttpExecutionAware) &#123;</span><br><span class="line">        execAware = (HttpExecutionAware) request;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">final</span> HttpRequestWrapper wrapper = HttpRequestWrapper.wrap(request);</span><br><span class="line">        <span class="keyword">final</span> HttpClientContext localcontext = HttpClientContext.adapt(</span><br><span class="line">            context != <span class="keyword">null</span> ? context : <span class="keyword">new</span> BasicHttpContext());</span><br><span class="line">        <span class="keyword">final</span> HttpRoute route = <span class="keyword">new</span> HttpRoute(target);</span><br><span class="line">        RequestConfig config = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">if</span> (request <span class="keyword">instanceof</span> Configurable) &#123;</span><br><span class="line">            config = ((Configurable) request).getConfig();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (config != <span class="keyword">null</span>) &#123;</span><br><span class="line">            localcontext.setRequestConfig(config);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.requestExecutor.execute(route, wrapper, localcontext, execAware);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (<span class="keyword">final</span> HttpException httpException) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> ClientProtocolException(httpException);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>At last, it calls <code>requestExecutor.execute</code>. </p>
+<p><code>requestExecutor</code> object is an instance of <code>MinimalClientExec</code> which implements <code>ClientExecChain</code>.</p>
+<p>MinimalClientExec#execute:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> CloseableHttpResponse <span class="title">execute</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="keyword">final</span> HttpRoute route,</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="keyword">final</span> HttpRequestWrapper request,</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="keyword">final</span> HttpClientContext context,</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="keyword">final</span> HttpExecutionAware execAware)</span> <span class="keyword">throws</span> IOException, HttpException </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> ConnectionRequest connRequest = connManager.requestConnection(route, <span class="keyword">null</span>);  <span class="comment">// a request for a HttpClientConnection whose lifecycle is managed by a connection manager</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">final</span> RequestConfig config = context.getRequestConfig();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> HttpClientConnection managedConn;  <span class="comment">// send request and receive response</span></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">final</span> <span class="keyword">int</span> timeout = config.getConnectionRequestTimeout();</span><br><span class="line">            managedConn = connRequest.get(timeout &gt; <span class="number">0</span> ? timeout : <span class="number">0</span>, TimeUnit.MILLISECONDS);</span><br><span class="line">        &#125; <span class="comment">//...</span></span><br><span class="line"></span><br><span class="line">        context.setAttribute(HttpCoreContext.HTTP_TARGET_HOST, target);</span><br><span class="line">        context.setAttribute(HttpCoreContext.HTTP_REQUEST, request);</span><br><span class="line">        context.setAttribute(HttpCoreContext.HTTP_CONNECTION, managedConn);</span><br><span class="line">        context.setAttribute(HttpClientContext.HTTP_ROUTE, route);</span><br><span class="line">        <span class="comment">// store Key-value pair. share data across different logics</span></span><br><span class="line"></span><br><span class="line">        httpProcessor.process(request, context);</span><br><span class="line">        <span class="keyword">final</span> HttpResponse response = requestExecutor.execute(request, managedConn, context);</span><br><span class="line">        httpProcessor.process(response, context);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// requestExecutor is an object of HttpRequestExecutor</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// httpProcessor is an object of ImmutableHttpProcessor. It processes http protocol. It includes multiple protocol interceptors:</span></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">            private final HttpRequestInterceptor[] requestInterceptors;</span></span><br><span class="line"><span class="comment">            private final HttpResponseInterceptor[] responseInterceptors;</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">        </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>The core part is how http request is sent out?</p>
+<p>HttpRequestExecutor#execute:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">HttpResponse response = doSendRequest(request, conn, context);</span><br><span class="line">            <span class="keyword">if</span> (response == <span class="keyword">null</span>) &#123;</span><br><span class="line">                response = doReceiveResponse(request, conn, context);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> response;</span><br></pre></td></tr></table></figure>
+
+<p>what is inside <code>doSendRequest</code>?</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">conn.sendRequestHeader(request);</span><br><span class="line">conn.sendRequestEntity((HttpEntityEnclosingRequest) request);</span><br></pre></td></tr></table></figure>
+
+<p>As we can see, <code>HttpClientConnection</code> actually does the hard work, sending request and receiving response. <code>HttpRequestExecutor</code> encapsulates the process. </p>
+<p>Thee main parts:</p>
+<ul>
+<li>manage requests (ConnectionManager)</li>
+<li>execute requests (RequestExecutor)</li>
+<li>process request (HttpProcessor)</li>
+</ul>
+<h1 id="HttpConnection-lt-HttpClientConnection"><a href="#HttpConnection-lt-HttpClientConnection" class="headerlink" title="HttpConnection &lt;- HttpClientConnection"></a>HttpConnection &lt;- HttpClientConnection</h1><p>The most commonly used implementation is <code>DefaultBHttpClientConnection</code></p>
+<p>It has two fields:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> HttpMessageParser&lt;HttpResponse&gt; responseParser;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> HttpMessageWriter&lt;HttpRequest&gt; requestWriter;</span><br></pre></td></tr></table></figure>
+
+<p>These two fieds are created based on <code>SessionOutputBuffer</code> and <code>SessionInputBuffer</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">this</span>.requestWriter = (requestWriterFactory != <span class="keyword">null</span> ? requestWriterFactory :</span><br><span class="line">    DefaultHttpRequestWriterFactory.INSTANCE).create(getSessionOutputBuffer());</span><br><span class="line"><span class="keyword">this</span>.responseParser = (responseParserFactory != <span class="keyword">null</span> ? responseParserFactory :</span><br><span class="line">    DefaultHttpResponseParserFactory.INSTANCE).create(getSessionInputBuffer(), constraints);</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="HttpClientConnectionManager-lt-BasicHttpClientConnectionManager"><a href="#HttpClientConnectionManager-lt-BasicHttpClientConnectionManager" class="headerlink" title="HttpClientConnectionManager &lt;- BasicHttpClientConnectionManager"></a>HttpClientConnectionManager &lt;- BasicHttpClientConnectionManager</h1><p>BasicHttpClientConnectionManager#connect</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">connect</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">           <span class="keyword">final</span> HttpClientConnection conn,</span></span></span><br><span class="line"><span class="function"><span class="params">           <span class="keyword">final</span> HttpRoute route,</span></span></span><br><span class="line"><span class="function"><span class="params">           <span class="keyword">final</span> <span class="keyword">int</span> connectTimeout,</span></span></span><br><span class="line"><span class="function"><span class="params">           <span class="keyword">final</span> HttpContext context)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">       Args.notNull(conn, <span class="string">&quot;Connection&quot;</span>);</span><br><span class="line">       Args.notNull(route, <span class="string">&quot;HTTP route&quot;</span>);</span><br><span class="line">       Asserts.check(conn == <span class="keyword">this</span>.conn, <span class="string">&quot;Connection not obtained from this manager&quot;</span>);</span><br><span class="line">       <span class="keyword">final</span> HttpHost host;</span><br><span class="line">       <span class="keyword">if</span> (route.getProxyHost() != <span class="keyword">null</span>) &#123;</span><br><span class="line">           host = route.getProxyHost();</span><br><span class="line">       &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">           host = route.getTargetHost();</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">final</span> InetSocketAddress localAddress = route.getLocalSocketAddress();</span><br><span class="line">       <span class="keyword">this</span>.connectionOperator.connect(<span class="keyword">this</span>.conn, host, localAddress,</span><br><span class="line">               connectTimeout, <span class="keyword">this</span>.socketConfig, context);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p>As we can see from the last line, <code>connectionOperator</code> create a socket and bind it to <code>HttpClientConnection</code>.</p>
+<h1 id="HttpClientConnectionManager-lt-PoolingHttpClientConnectionManager"><a href="#HttpClientConnectionManager-lt-PoolingHttpClientConnectionManager" class="headerlink" title="HttpClientConnectionManager &lt;- PoolingHttpClientConnectionManager"></a>HttpClientConnectionManager &lt;- PoolingHttpClientConnectionManager</h1><p>It maitains a connection pool (cpool). A pool usually has a factory (InternalConnectionFactory)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">this</span>.pool = <span class="keyword">new</span> CPool(<span class="keyword">new</span> InternalConnectionFactory(</span><br><span class="line">               <span class="keyword">this</span>.configData, connFactory), <span class="number">2</span>, <span class="number">20</span>, timeToLive, timeUnit);</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Java/" rel="tag"># Java</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/11/27/Generic-in-Scala/" rel="prev" title="Generic in Scala">
+      <i class="fa fa-chevron-left"></i> Generic in Scala
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/12/12/Service-Provider-Framework/" rel="next" title="Service Provider Framework">
+      Service Provider Framework <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#HttpClient-example"><span class="nav-number">1.</span> <span class="nav-text">HttpClient example</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HttpClient-lt-CloseableHttpClient-lt-MinimalHttpClient"><span class="nav-number">2.</span> <span class="nav-text">HttpClient &lt;- CloseableHttpClient &lt;- MinimalHttpClient</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HttpConnection-lt-HttpClientConnection"><span class="nav-number">3.</span> <span class="nav-text">HttpConnection &lt;- HttpClientConnection</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HttpClientConnectionManager-lt-BasicHttpClientConnectionManager"><span class="nav-number">4.</span> <span class="nav-text">HttpClientConnectionManager &lt;- BasicHttpClientConnectionManager</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HttpClientConnectionManager-lt-PoolingHttpClientConnectionManager"><span class="nav-number">5.</span> <span class="nav-text">HttpClientConnectionManager &lt;- PoolingHttpClientConnectionManager</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Dafei Wang"
+      src="/images/avatar-png.png">
+  <p class="site-author-name" itemprop="name">Dafei Wang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dafei Wang</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="pjax">
+  
+
+  
+
+    </div>
+</body>
+</html>
